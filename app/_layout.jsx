@@ -6,7 +6,7 @@ import {
   PaperProvider,
 } from "react-native-paper";
 import { darkTheme } from "../constants/theme";
-import { StatusBar } from "expo-status-bar";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const RootLayout = () => {
   const theme = {
@@ -23,12 +23,29 @@ const RootLayout = () => {
           headerTintColor: theme.colors.onBackground,
           tabBarStyle: {
             backgroundColor: theme.colors.elevation.level1,
-            borderTopWidth: 0
+            borderTopWidth: 0,
           },
         }}
       >
-        <Tabs.Screen name="(home)" options={{ title: "Home", headerShown: false }}/>
-        <Tabs.Screen name="qut_events" options={{ title: "QUT Events" }} />
+        <Tabs.Screen
+          name="(home)"
+          options={{
+            title: "Home",
+            headerShown: false,
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="home" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="qut_events"
+          options={{
+            title: "QUT Events",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="city" size={size} color={color} />
+            ),
+          }}
+        />
       </Tabs>
     </PaperProvider>
   );
