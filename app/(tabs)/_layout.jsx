@@ -4,7 +4,6 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useAuth } from "../../context/authContext";
 import { useTheme } from "react-native-paper";
 
-
 const TabsLayout = () => {
   const { token } = useAuth();
   const loggedIn = !!token;
@@ -20,6 +19,8 @@ const TabsLayout = () => {
           backgroundColor: theme.colors.elevation.level1,
           borderTopWidth: 0,
         },
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
       }}
     >
       <Tabs.Screen
