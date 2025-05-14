@@ -1,5 +1,4 @@
 import React from "react";
-
 import { Tabs } from "expo-router";
 import {
   MD3DarkTheme as DefaultTheme,
@@ -7,14 +6,17 @@ import {
 } from "react-native-paper";
 import { darkTheme } from "../constants/theme";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { AuthProvider, useAuth } from "../context/authContext";
 
-const RootLayout = () => {
-  const theme = {
-    ...DefaultTheme,
-    colors: { ...darkTheme.colors },
-  };
+const theme = {
+  ...DefaultTheme,
+  colors: { ...darkTheme.colors },
+};
 
-  const loggedIn = false;
+// rafce inner layout using useAuth and your href logic
+const TabsLayout = () => {
+  const { token } = useAuth();
+  const loggedIn = !!token;
 
   return (
     <PaperProvider theme={theme}>
@@ -90,5 +92,12 @@ const RootLayout = () => {
     </PaperProvider>
   );
 };
+
+// rafce outer layout wrapping with AuthProvider
+const RootLayout = () => (
+  <AuthProvider>
+    <TabsLayout />
+  </AuthProvider>
+);
 
 export default RootLayout;
