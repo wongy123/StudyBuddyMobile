@@ -14,6 +14,8 @@ const RootLayout = () => {
     colors: { ...darkTheme.colors },
   };
 
+  const loggedIn = true;
+
   return (
     <PaperProvider theme={theme}>
       <Tabs
@@ -43,6 +45,20 @@ const RootLayout = () => {
             title: "QUT Events",
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="city" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="create_session"
+          options={{
+            href: loggedIn ? "/create_session" : null,
+            title: "Create Session",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="plus-circle"
+                size={size}
+                color={color}
+              />
             ),
           }}
         />
