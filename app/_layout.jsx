@@ -14,7 +14,7 @@ const RootLayout = () => {
     colors: { ...darkTheme.colors },
   };
 
-  const loggedIn = true;
+  const loggedIn = false;
 
   return (
     <PaperProvider theme={theme}>
@@ -40,6 +40,20 @@ const RootLayout = () => {
           }}
         />
         <Tabs.Screen
+          name="create_session"
+          options={{
+            href: loggedIn ? "/create_session" : null,
+            title: "Create Session",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="plus-circle"
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="qut_events"
           options={{
             title: "QUT Events",
@@ -49,13 +63,23 @@ const RootLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="create_session"
+          name="login"
           options={{
-            href: loggedIn ? "/create_session" : null,
-            title: "Create Session",
+            href: !loggedIn ? "/login" : null,
+            title: "Login",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="login" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="register"
+          options={{
+            href: !loggedIn ? "/register" : null,
+            title: "Register",
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
-                name="plus-circle"
+                name="account-plus"
                 size={size}
                 color={color}
               />
