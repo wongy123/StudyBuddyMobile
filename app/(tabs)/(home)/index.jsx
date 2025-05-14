@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { Button, useTheme } from "react-native-paper";
 import { Link } from "expo-router";
-import { useAuth } from "../../context/authContext";
+import { useAuth } from "../../../context/authContext";
 
 const Home = () => {
 
