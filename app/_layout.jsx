@@ -1,10 +1,10 @@
-import { AuthProvider } from "../context/authContext";
+import { AuthProvider } from "@context/authContext";
 import { Slot } from "expo-router";
 import {
   PaperProvider,
   MD3DarkTheme as DefaultTheme,
 } from "react-native-paper";
-import { darkTheme } from "../constants/theme";
+import { darkTheme } from "@constants/theme";
 
 const RootLayout = () => {
   const theme = {

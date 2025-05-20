@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from "react";
 import {
   SafeAreaView,
   KeyboardAvoidingView,
@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Keyboard,
-} from 'react-native';
+} from "react-native";
 import {
   TextInput,
   Button,
@@ -14,61 +14,64 @@ import {
   Text,
   HelperText,
   useTheme,
-} from 'react-native-paper';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
-import { useAuth } from '../../../context/authContext';
-import { validate as isEmail } from 'email-validator';
+} from "react-native-paper";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import { useAuth } from "../../../src/context/authContext";
+import { validate as isEmail } from "email-validator";
 
-const baseUrl = 'https://n11941073.ifn666.com/StudyBuddy';
+const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const RegisterScreen = () => {
   const { colors } = useTheme();
-  const router   = useRouter();
-  const params   = useLocalSearchParams();
-  const redirect = params?.redirect || '/';
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  const redirect = params?.redirect || "/";
 
   // ─── form state
-  const [userName,    setUserName]    = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [email,       setEmail]       = useState('');
-  const [degree,      setDegree]      = useState('');
-  const [password,    setPassword]    = useState('');
-  const [confirm,     setConfirm]     = useState('');
+  const [userName, setUserName] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [degree, setDegree] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
 
   // ─── field-error flags
   const [err, setErr] = useState({
     userName: false,
-    email:    false,
-    degree:   false,
+    email: false,
+    degree: false,
     password: false,
-    confirm:  false,
+    confirm: false,
   });
 
   // ─── snackbar
   const [snackVisible, setSnackVisible] = useState(false);
-  const [snackMsg,     setSnackMsg]     = useState('');
-  const showSnack = (msg) => { setSnackMsg(msg); setSnackVisible(true); };
+  const [snackMsg, setSnackMsg] = useState("");
+  const showSnack = (msg) => {
+    setSnackMsg(msg);
+    setSnackVisible(true);
+  };
 
   const { login } = useAuth();
 
   /** Clears all inputs, errors, and snackbar */
   const resetForm = () => {
-    setUserName('');
-    setDisplayName('');
-    setEmail('');
-    setDegree('');
-    setPassword('');
-    setConfirm('');
+    setUserName("");
+    setDisplayName("");
+    setEmail("");
+    setDegree("");
+    setPassword("");
+    setConfirm("");
     setErr({
       userName: false,
-      email:    false,
-      degree:   false,
+      email: false,
+      degree: false,
       password: false,
-      confirm:  false,
+      confirm: false,
     });
     setSnackVisible(false);
-    setSnackMsg('');
+    setSnackMsg("");
   };
 
   // Reset every time the screen comes into focus
@@ -81,46 +84,52 @@ const RegisterScreen = () => {
   // ─── submit handler (unchanged)
   const handleRegister = async () => {
     const newErr = {
-      userName: userName.trim() === '',
-      email:    !isEmail(email),
-      degree:   degree.trim() === '',
-      password: password === '',
-      confirm:  confirm !== password || confirm === '',
+      userName: userName.trim() === "",
+      email: !isEmail(email),
+      degree: degree.trim() === "",
+      password: password === "",
+      confirm: confirm !== password || confirm === "",
     };
     setErr(newErr);
     if (Object.values(newErr).some(Boolean)) {
-      showSnack('Please fix the errors in the form');
+      showSnack("Please fix the errors in the form");
       return;
     }
 
     try {
       const res = await fetch(`${baseUrl}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userName,
           displayName,
           email,
           password,
           degree,
-          profileBio: '',
+          profileBio: "",
         }),
       });
       const regData = await res.json();
-      if (!res.ok) { showSnack(regData.message || 'Registration failed'); return; }
+      if (!res.ok) {
+        showSnack(regData.message || "Registration failed");
+        return;
+      }
 
       const lgRes = await fetch(`${baseUrl}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
       const lgData = await lgRes.json();
-      if (!lgRes.ok) { showSnack(lgData.message || 'Auto-login failed'); return; }
+      if (!lgRes.ok) {
+        showSnack(lgData.message || "Auto-login failed");
+        return;
+      }
 
       await login(lgData.token);
       router.replace(redirect);
     } catch {
-      showSnack('Network error. Please try again.');
+      showSnack("Network error. Please try again.");
     }
   };
 
@@ -130,22 +139,25 @@ const RegisterScreen = () => {
       <KeyboardAvoidingView
         style={[
           { flex: 1 },
-          Platform.OS === 'android' && { paddingBottom: 96 },
+          Platform.OS === "android" && { paddingBottom: 96 },
         ]}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
               flexGrow: 1,
-              justifyContent: 'center',
+              justifyContent: "center",
               paddingHorizontal: 24,
               gap: 12,
             }}
           >
-            <Text variant="headlineMedium" style={{ color: colors.onBackground }}>
+            <Text
+              variant="headlineMedium"
+              style={{ color: colors.onBackground }}
+            >
               Create account
             </Text>
 
@@ -158,7 +170,9 @@ const RegisterScreen = () => {
               autoCapitalize="none"
               error={err.userName}
             />
-            {err.userName && <HelperText type="error">Username is required</HelperText>}
+            {err.userName && (
+              <HelperText type="error">Username is required</HelperText>
+            )}
 
             {/* Display name */}
             <TextInput
@@ -178,7 +192,9 @@ const RegisterScreen = () => {
               autoCapitalize="none"
               error={err.email}
             />
-            {err.email && <HelperText type="error">Enter a valid email address</HelperText>}
+            {err.email && (
+              <HelperText type="error">Enter a valid email address</HelperText>
+            )}
 
             {/* Degree */}
             <TextInput
@@ -189,7 +205,9 @@ const RegisterScreen = () => {
               placeholder="e.g. B.IT, MCompSc"
               error={err.degree}
             />
-            {err.degree && <HelperText type="error">Degree is required</HelperText>}
+            {err.degree && (
+              <HelperText type="error">Degree is required</HelperText>
+            )}
 
             {/* Password */}
             <TextInput
@@ -201,7 +219,9 @@ const RegisterScreen = () => {
               autoCapitalize="none"
               error={err.password}
             />
-            {err.password && <HelperText type="error">Password cannot be empty</HelperText>}
+            {err.password && (
+              <HelperText type="error">Password cannot be empty</HelperText>
+            )}
 
             {/* Confirm */}
             <TextInput
@@ -213,7 +233,9 @@ const RegisterScreen = () => {
               autoCapitalize="none"
               error={err.confirm}
             />
-            {err.confirm && <HelperText type="error">Passwords do not match</HelperText>}
+            {err.confirm && (
+              <HelperText type="error">Passwords do not match</HelperText>
+            )}
 
             <Button mode="contained" onPress={handleRegister}>
               Register
@@ -227,7 +249,7 @@ const RegisterScreen = () => {
           duration={2500}
           style={{
             backgroundColor: colors.error,
-            marginBottom: Platform.OS === 'android' ? 48 : 0,
+            marginBottom: Platform.OS === "android" ? 48 : 0,
           }}
         >
           {snackMsg}

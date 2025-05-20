@@ -14,7 +14,7 @@ import {
   Text,
 } from "react-native-paper";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useAuth } from "../../../context/authContext";
+import { useAuth } from "../../../src/context/authContext";
 
 const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useAuth } from "../../context/authContext";
+import { useAuth } from "@context/authContext";
 import { useTheme } from "react-native-paper";
 
 const TabsLayout = () => {
