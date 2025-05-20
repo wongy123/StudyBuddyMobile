@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   FlatList,
@@ -23,6 +23,7 @@ const PAGE_SIZE = 5;
 export default function HomeScreen() {
   const { colors } = useTheme();
   const { token } = useAuth();
+  const listRef = useRef(null);
 
   const [sessions, setSessions] = useState([]);
   const [error, setError] = useState(null);
@@ -77,6 +78,7 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchSessions(page);
   }, [page]);
+
   useEffect(() => {
     fetchSessions(1);
   }, [search, sort]);
@@ -84,6 +86,11 @@ export default function HomeScreen() {
   const onRefresh = () => {
     setRefreshing(true);
     fetchSessions(page);
+  };
+
+  const goToPage = (newPage) => {
+    setPage(newPage);
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
   return (
@@ -96,28 +103,30 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <View style={styles.controls}>
-        <TextInput
-          mode="outlined"
-          placeholder="Search sessions…"
-          value={search}
-          onChangeText={setSearch}
-          left={<TextInput.Icon icon="magnify" />}
-          returnKeyType="search"
-          onSubmitEditing={Keyboard.dismiss}
-        />
-        <SegmentedButtons
-          value={sort}
-          onValueChange={setSort}
-          buttons={[
-            { label: "Soonest", value: "asc" },
-            { label: "Latest", value: "desc" },
-          ]}
-          style={styles.segment}
-        />
-      </View>
-
       <FlatList
+        ref={listRef}
+        ListHeaderComponent={
+          <View style={styles.controls}>
+            <TextInput
+              mode="outlined"
+              placeholder="Search sessions…"
+              value={search}
+              onChangeText={setSearch}
+              left={<TextInput.Icon icon="magnify" />}
+              returnKeyType="search"
+              onSubmitEditing={Keyboard.dismiss}
+            />
+            <SegmentedButtons
+              value={sort}
+              onValueChange={setSort}
+              buttons={[
+                { label: "Soonest", value: "asc" },
+                { label: "Latest", value: "desc" },
+              ]}
+              style={styles.segment}
+            />
+          </View>
+        }
         data={sessions}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
@@ -142,6 +151,29 @@ export default function HomeScreen() {
           )
         }
         contentContainerStyle={{ backgroundColor: colors.background }}
+        ListFooterComponent={
+          totalPages > 1 && (
+            <View style={styles.pager}>
+              <Button
+                mode="text"
+                onPress={() => goToPage(page - 1)}
+                disabled={page === 1}
+              >
+                Previous
+              </Button>
+              <Text style={{ color: colors.onSurface }}>
+                {page} / {totalPages}
+              </Text>
+              <Button
+                mode="text"
+                onPress={() => goToPage(page + 1)}
+                disabled={page === totalPages}
+              >
+                Next
+              </Button>
+            </View>
+          )
+        }
       />
 
       <Snackbar
@@ -155,42 +187,21 @@ export default function HomeScreen() {
         action={{
           label: "Close",
           onPress: () => setError(null),
-          labelStyle: { color: snack.severity === "error" ? colors.onErrorContainer : "white" },
+          labelStyle: {
+            color:
+              snack.severity === "error" ? colors.onErrorContainer : "white",
+          },
         }}
       >
         <Text
           style={{
             color:
-              snack.severity === "error"
-                ? colors.onErrorContainer
-                : "white",
+              snack.severity === "error" ? colors.onErrorContainer : "white",
           }}
         >
           {snack.message}
         </Text>
       </Snackbar>
-
-      {totalPages > 1 && (
-        <View style={styles.pager}>
-          <Button
-            mode="text"
-            onPress={() => setPage((p) => p - 1)}
-            disabled={page === 1}
-          >
-            Previous
-          </Button>
-          <Text style={{ color: colors.onSurface }}>
-            {page} / {totalPages}
-          </Text>
-          <Button
-            mode="text"
-            onPress={() => setPage((p) => p + 1)}
-            disabled={page === totalPages}
-          >
-            Next
-          </Button>
-        </View>
-      )}
 
       {error && (
         <Snackbar
