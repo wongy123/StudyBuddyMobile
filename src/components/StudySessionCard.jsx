@@ -58,7 +58,7 @@ const StudySessionCard = ({
       style={[styles.card, { backgroundColor: colors.surfaceVariant }]}
       elevation={2}
     >
-      <TouchableOpacity onPress={() => router.push(`/session/${_id}`)}>
+      <TouchableOpacity onPress={() => router.push(`/study_session/${_id}`)}>
         <Card.Title
           title={title}
           subtitle={`📘 ${courseCode}`}
@@ -111,7 +111,7 @@ const StudySessionCard = ({
         <Card.Actions style={styles.actions}>
           <Button
             mode="outlined"
-            onPress={() => router.push(`/session/${_id}`)}
+            onPress={() => router.push(`/study_session/${_id}`)}
             textColor={colors.primary}
           >
             View
