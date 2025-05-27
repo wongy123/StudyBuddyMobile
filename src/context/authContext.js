@@ -5,9 +5,18 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
+  const [tokenLoaded, setTokenLoaded] = useState(false);  // ensures load only happens once
+
+  const isAuthenticated = !!token;
 
   useEffect(() => {
-    SecureStore.getItemAsync('authToken').then(setToken);
+    const loadToken = async () => {
+      const storedToken = await SecureStore.getItemAsync('authToken');
+      if (storedToken) setToken(storedToken);
+      setTokenLoaded(true);
+    };
+    loadToken();
   }, []);
 
   const login = async (newToken) => {
@@ -18,10 +27,22 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await SecureStore.deleteItemAsync('authToken');
     setToken(null);
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        token,
+        setToken,
+        user,
+        setUser,
+        isAuthenticated,
+        login,
+        logout,
+        tokenLoaded,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

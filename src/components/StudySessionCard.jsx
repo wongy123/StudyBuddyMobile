@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import {
   Card,
@@ -9,7 +9,6 @@ import {
   useTheme,
 } from "react-native-paper";
 import { useRouter } from "expo-router";
-import { useUser } from "@hooks/useUser";
 import { useJoinOrLeaveSession } from "@hooks/useJoinOrLeaveSession";
 import { formatDate } from "@utils/formatDate";
 
@@ -24,13 +23,15 @@ const StudySessionCard = ({
   location,
   createdBy,
   participants,
+  user,
+  token,
   onJoinSuccess,
   showSnack,
 }) => {
   const { colors } = useTheme();
   const router = useRouter();
-  const { token, user } = useUser();
   const userId = user?.id;
+
   const isParticipant = useMemo(
     () => participants.some((p) => String(p._id) === String(userId)),
     [participants, userId]

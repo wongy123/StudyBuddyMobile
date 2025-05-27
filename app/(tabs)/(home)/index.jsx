@@ -15,14 +15,14 @@ import {
   useTheme,
 } from "react-native-paper";
 import StudySessionCard from "@components/StudySessionCard";
-import { useAuth } from "@context/authContext";
+import { useUser } from "@hooks/useUser";
 
 const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 const PAGE_SIZE = 5;
 
 export default function HomeScreen() {
   const { colors } = useTheme();
-  const { token } = useAuth();
+  const { token, displayName, user } = useUser();
   const listRef = useRef(null);
 
   const [sessions, setSessions] = useState([]);
@@ -102,7 +102,8 @@ export default function HomeScreen() {
           </Text>
         </View>
       )}
-
+      //Remember to remove this lol
+      <Text>Welcome, {displayName}</Text>
       <FlatList
         ref={listRef}
         ListHeaderComponent={
@@ -132,6 +133,8 @@ export default function HomeScreen() {
         renderItem={({ item }) => (
           <StudySessionCard
             {...item}
+            user={user}
+            token={token}
             onJoinSuccess={() => fetchSessions(page)}
             showSnack={showSnack}
           />
@@ -175,7 +178,6 @@ export default function HomeScreen() {
           )
         }
       />
-
       <Snackbar
         visible={snack.open}
         onDismiss={hideSnack}
@@ -202,7 +204,6 @@ export default function HomeScreen() {
           {snack.message}
         </Text>
       </Snackbar>
-
       {error && (
         <Snackbar
           visible={true}
