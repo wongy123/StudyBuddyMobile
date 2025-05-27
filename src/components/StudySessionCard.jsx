@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useMemo } from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import {
   Card,
   Text,
@@ -7,11 +7,11 @@ import {
   Avatar,
   ActivityIndicator,
   useTheme,
-} from 'react-native-paper';
-import { useRouter } from 'expo-router';
-import { useUser } from '@hooks/useUser';
-import { useJoinOrLeaveSession } from '@hooks/useJoinOrLeaveSession';
-import { formatDate } from '@utils/formatDate';
+} from "react-native-paper";
+import { useRouter } from "expo-router";
+import { useUser } from "@hooks/useUser";
+import { useJoinOrLeaveSession } from "@hooks/useJoinOrLeaveSession";
+import { formatDate } from "@utils/formatDate";
 
 const StudySessionCard = ({
   _id,
@@ -31,25 +31,32 @@ const StudySessionCard = ({
   const router = useRouter();
   const { token, user } = useUser();
   const userId = user?.id;
-  const [isParticipant, setIsParticipant] = useState(
-    participants.some((p) => String(p._id) === String(userId))
+  const isParticipant = useMemo(
+    () => participants.some((p) => String(p._id) === String(userId)),
+    [participants, userId]
   );
 
   const { handleJoinOrLeave, loading } = useJoinOrLeaveSession({
     sessionId: _id,
     isParticipant,
     onSuccess: () => {
-      setIsParticipant((prev) => !prev);
       onJoinSuccess?.();
-      showSnack?.(`Successfully ${isParticipant ? 'left' : 'joined'} the session!`, 'success');
+      showSnack?.(
+        `Successfully ${isParticipant ? "left" : "joined"} the session!`,
+        "success"
+      );
     },
-    onError: (msg) => showSnack?.(msg, 'error'),
+    onError: (msg) => showSnack?.(msg, "error"),
   });
 
-  const shortDesc = description.length > 100 ? `${description.slice(0, 100)}…` : description;
+  const shortDesc =
+    description.length > 100 ? `${description.slice(0, 100)}…` : description;
 
   return (
-    <Card style={[styles.card, { backgroundColor: colors.surfaceVariant }]} elevation={2}>
+    <Card
+      style={[styles.card, { backgroundColor: colors.surfaceVariant }]}
+      elevation={2}
+    >
       <TouchableOpacity onPress={() => router.push(`/session/${_id}`)}>
         <Card.Title
           title={title}
@@ -61,23 +68,40 @@ const StudySessionCard = ({
               <Avatar.Text
                 size={36}
                 label={createdBy.displayName[0]}
-                style={{ backgroundColor: colors.secondaryContainer, marginHorizontal: 16 }}
+                style={{
+                  backgroundColor: colors.secondaryContainer,
+                  marginHorizontal: 16,
+                }}
                 labelStyle={{ color: colors.onSecondaryContainer }}
               />
             )
           }
         />
         <Card.Content>
-          <Text variant="bodyMedium" style={{ color: colors.onSurface, marginBottom: 8 }}>
+          <Text
+            variant="bodyMedium"
+            style={{ color: colors.onSurface, marginBottom: 8 }}
+          >
             {shortDesc}
           </Text>
           <View style={styles.detailColumn}>
-            <Text style={{ color: colors.onSurfaceVariant }}>📅 {formatDate(date)}</Text>
-            <Text style={{ color: colors.onSurfaceVariant }}>🕑 {startTime} – {endTime}</Text>
-            <Text style={{ color: colors.onSurfaceVariant }}>📍 {location}</Text>
+            <Text style={{ color: colors.onSurfaceVariant }}>
+              📅 {formatDate(date)}
+            </Text>
+            <Text style={{ color: colors.onSurfaceVariant }}>
+              🕑 {startTime} – {endTime}
+            </Text>
+            <Text style={{ color: colors.onSurfaceVariant }}>
+              📍 {location}
+            </Text>
           </View>
-          <Text style={{ color: colors.onSurfaceVariant }}>
-            👥 Participants: {participants.length + (isParticipant && !participants.some(p => String(p._id) === String(userId)) ? 1 : 0)}
+          <Text style={{ color: colors.onSurfaceVariant, marginBottom: 8 }}>
+            👥 Participants:{" "}
+            {participants.length +
+              (isParticipant &&
+              !participants.some((p) => String(p._id) === String(userId))
+                ? 1
+                : 0)}
           </Text>
         </Card.Content>
       </TouchableOpacity>
@@ -96,11 +120,20 @@ const StudySessionCard = ({
             onPress={handleJoinOrLeave}
             buttonColor={isParticipant ? colors.error : colors.primary}
             disabled={loading}
-            icon={loading ? () => (
-              <ActivityIndicator animating color={colors.onPrimary} size={18} style={{ marginRight: 8 }} />
-            ) : undefined}
+            icon={
+              loading
+                ? () => (
+                    <ActivityIndicator
+                      animating
+                      color={colors.onPrimary}
+                      size={18}
+                      style={{ marginRight: 8 }}
+                    />
+                  )
+                : undefined
+            }
           >
-            {isParticipant ? 'Leave' : 'Join'}
+            {isParticipant ? "Leave" : "Join"}
           </Button>
         </Card.Actions>
       )}
@@ -112,15 +145,15 @@ const styles = StyleSheet.create({
   card: {
     marginHorizontal: 16,
     marginBottom: 8,
+    paddingBottom: 8,
   },
   detailColumn: {
     gap: 4,
     marginBottom: 4,
   },
   actions: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     paddingHorizontal: 16,
-    paddingBottom: 8,
   },
 });
 

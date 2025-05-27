@@ -43,6 +43,8 @@ const LoginScreen = () => {
 
       if (res.ok) {
         await login(data.token);
+        setEmail("");
+        setPassword("");
         router.replace(backgroundLocation);
       } else {
         setErrorMessage(data.message || "Login failed");
