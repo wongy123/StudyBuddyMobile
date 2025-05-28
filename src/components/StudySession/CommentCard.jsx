@@ -41,7 +41,7 @@ const CommentCard = ({ user: author, createdAt, content, onDelete, onUpdate }) =
   };
 
   return (
-    <Card style={styles.card} mode="outlined">
+    <Card   style={[styles.card, { backgroundColor: colors.surfaceVariant }]} elevation={2}>
       <Card.Title
         title={author?.displayName || 'Deleted User'}
         subtitle={formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
@@ -69,7 +69,6 @@ const CommentCard = ({ user: author, createdAt, content, onDelete, onUpdate }) =
           <>
             <TextInput
               mode="outlined"
-              multiline
               value={editedContent}
               onChangeText={setEditedContent}
               maxLength={500}
@@ -94,7 +93,7 @@ const CommentCard = ({ user: author, createdAt, content, onDelete, onUpdate }) =
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 12,
+    marginBottom: 2,
     marginHorizontal: 8,
   },
   input: {

@@ -102,8 +102,6 @@ export default function HomeScreen() {
           </Text>
         </View>
       )}
-      {/* Remember to remove this lol */}
-      <Text variant="titleMedium" style={{ color: colors.onSurface }}>Welcome, {displayName}</Text>
       <FlatList
         ref={listRef}
         ListHeaderComponent={
