@@ -5,7 +5,7 @@ import StudySessionCard from "@components/StudySessionCard";
 
 const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
-const JoinedSessions = ({ userId, token }) => {
+const JoinedSessions = ({ user, token }) => {
   const { colors } = useTheme();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ const JoinedSessions = ({ userId, token }) => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const res = await fetch(`${baseUrl}/api/sessions/joined/${userId}`, {
+        const res = await fetch(`${baseUrl}/api/sessions/joined/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const result = await res.json();
@@ -28,8 +28,8 @@ const JoinedSessions = ({ userId, token }) => {
       }
     };
 
-    fetchSessions();
-  }, [userId]);
+    if (user?.id && token) fetchSessions();
+  }, [user?.id, token]);
 
   if (loading) {
     return (
@@ -53,15 +53,15 @@ const JoinedSessions = ({ userId, token }) => {
 
   return (
     <View style={styles.container}>
-      <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+      <Text variant="titleMedium" style={{ marginBottom: 8, marginHorizontal: 16 }}>
         👥 Joined Sessions
       </Text>
       {sessions.map((session) => (
         <StudySessionCard
           key={session._id}
           {...session}
-          user={null}
-          token={null}
+          user={user}
+          token={token}
         />
       ))}
     </View>
@@ -70,8 +70,6 @@ const JoinedSessions = ({ userId, token }) => {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
-    paddingBottom: 16,
     marginTop: 16,
   },
   text: {

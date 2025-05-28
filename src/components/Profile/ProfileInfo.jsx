@@ -1,40 +1,75 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, useTheme, Button } from 'react-native-paper';
-import { useRouter } from 'expo-router';
-import { useUser } from '@hooks/useUser';
+import { Text, useTheme, ActivityIndicator } from 'react-native-paper';
 
-const ProfileInfo = ({ user, isOwner }) => {
+const baseUrl = 'https://n11941073.ifn666.com/StudyBuddy';
+
+const ProfileInfo = ({ userId, token }) => {
   const { colors } = useTheme();
-  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`${baseUrl}/api/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || 'Failed to load user');
+        setUser(result.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId && token) fetchUser();
+  }, [userId, token]);
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator animating size="small" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <Text style={{ color: colors.error, textAlign: 'center' }}>{error}</Text>
+    );
+  }
+
+  if (!user) return null;
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text variant="titleLarge">{user.displayName}</Text>
-          <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
-            @{user.userName}
-          </Text>
-        </View>
-
-        {isOwner && (
-          <Button mode="outlined" onPress={() => router.push('/my_profile/edit')}>
-            Edit
-          </Button>
-        )}
-      </View>
+      <Text variant="titleLarge">{user.displayName}</Text>
+      <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant }}>
+        @{user.userName}
+      </Text>
 
       <View style={styles.section}>
-        <Text variant="labelMedium" style={{ color: colors.onSurfaceVariant }}>Degree</Text>
+        <Text variant="labelMedium" style={{ color: colors.onSurfaceVariant }}>
+          Degree
+        </Text>
         <Text variant="bodyLarge">{user.degree || 'Not specified'}</Text>
       </View>
 
       <View style={styles.section}>
-        <Text variant="labelMedium" style={{ color: colors.onSurfaceVariant }}>Bio</Text>
+        <Text variant="labelMedium" style={{ color: colors.onSurfaceVariant }}>
+          Bio
+        </Text>
         <Text
           variant="bodyLarge"
-          style={{ color: user.profileBio ? colors.onSurface : colors.onSurfaceVariant }}
+          style={{
+            color: user.profileBio ? colors.onSurface : colors.onSurfaceVariant,
+          }}
         >
           {user.profileBio || 'This user hasn’t written a bio yet.'}
         </Text>
@@ -45,12 +80,12 @@ const ProfileInfo = ({ user, isOwner }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    gap: 24,
+    gap:16,
+    marginHorizontal: 16,
+    marginTop: 16
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  center: {
+    padding: 16,
     alignItems: 'center',
   },
   section: {
