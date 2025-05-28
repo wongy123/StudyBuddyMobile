@@ -80,6 +80,20 @@ const TabsLayout = () => {
           ),
         }}
       />
+      <Tabs.Screen
+        name="my_profile"
+        options={{
+          href: !loggedIn ? "/my_profile" : null,
+          title: "My Profile",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="account-box"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 };
