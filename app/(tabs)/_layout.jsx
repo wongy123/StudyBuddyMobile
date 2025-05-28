@@ -83,8 +83,9 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="my_profile"
         options={{
-          href: !loggedIn ? "/my_profile" : null,
+          href: loggedIn ? "/my_profile" : null,
           title: "My Profile",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="account-box"

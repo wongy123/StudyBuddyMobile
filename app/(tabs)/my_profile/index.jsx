@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import { useUser } from '@hooks/useUser';
 import ProfileInfo from '@components/Profile/ProfileInfo';
 import JoinedSessions from '@components/Profile/JoinedSessions';
+import { useFocusEffect } from 'expo-router';
 
 const baseUrl = 'https://n11941073.ifn666.com/StudyBuddy';
 
@@ -14,14 +15,15 @@ export default function MyProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     const fetchProfile = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`${baseUrl}/api/users/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const result = await res.json();
-
         if (!res.ok) throw new Error(result.message || 'Failed to load profile');
         setCurrentUser(result.data);
       } catch (err) {
@@ -32,7 +34,8 @@ export default function MyProfileScreen() {
     };
 
     if (user?.id && token) fetchProfile();
-  }, [user, token]);
+  }, [user, token])
+);
 
   if (loading) {
     return (
@@ -63,8 +66,8 @@ export default function MyProfileScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
-    padding: 16,
+    gap: 8,
+    padding: 8,
   },
   center: {
     flex: 1,

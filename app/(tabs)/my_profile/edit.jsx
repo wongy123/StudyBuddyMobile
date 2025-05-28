@@ -87,7 +87,7 @@ export default function EditProfileScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}  style={{ backgroundColor: colors.background }}>
       <TextInput
         label="Display Name"
         mode="outlined"
