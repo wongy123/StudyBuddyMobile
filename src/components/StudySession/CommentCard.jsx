@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import React, { useState } from "react";
+import { View, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import {
   Text,
   TextInput,
@@ -8,15 +8,24 @@ import {
   Card,
   IconButton,
   Avatar,
-} from 'react-native-paper';
-import { formatDistanceToNow } from 'date-fns';
-import { useUser } from '@hooks/useUser';
+} from "react-native-paper";
+import { formatDistanceToNow } from "date-fns";
+import { useUser } from "@hooks/useUser";
+import { useRouter } from "expo-router";
 
-const CommentCard = ({ user: author, createdAt, content, onDelete, onUpdate }) => {
+const CommentCard = ({
+  user: author,
+  createdAt,
+  content,
+  onDelete,
+  onUpdate,
+}) => {
   const { colors } = useTheme();
   const { user: currentUser } = useUser();
+  const router = useRouter();
+
   const isOwner = currentUser?.id === author?._id;
-  const isModmin = ['admin', 'moderator'].includes(currentUser?.role);
+  const isModmin = ["admin", "moderator"].includes(currentUser?.role);
 
   const [editing, setEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
@@ -30,35 +39,64 @@ const CommentCard = ({ user: author, createdAt, content, onDelete, onUpdate }) =
 
   const confirmDelete = () => {
     Alert.alert(
-      'Delete Comment',
-      'Are you sure you want to delete this comment?',
+      "Delete Comment",
+      "Are you sure you want to delete this comment?",
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', onPress: onDelete, style: 'destructive' },
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", onPress: onDelete, style: "destructive" },
       ],
       { cancelable: true }
     );
   };
 
+  const navigateToProfile = () => {
+    if (!author?._id) return;
+    router.push(
+      author._id === currentUser?.id ? "/my_profile" : `/profile/${author._id}`
+    );
+  };
+
   return (
-    <Card   style={[styles.card, { backgroundColor: colors.surfaceVariant }]} elevation={2}>
+    <Card
+      style={[styles.card, { backgroundColor: colors.surfaceVariant }]}
+      elevation={2}
+    >
       <Card.Title
-        title={author?.displayName || 'Deleted User'}
+        title={
+          author ? (
+            <Text>
+              <TouchableOpacity onPress={navigateToProfile}>
+              <Text variant="titleMedium" >{author.displayName} (@{author.userName})</Text>
+              </TouchableOpacity>
+            </Text>
+          ) : (
+            <Text>
+              <Text variant="titleMedium">'Deleted User'</Text>
+            </Text>
+          )
+        }
         subtitle={formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
         left={(props) =>
           author ? (
-            <Avatar.Text
-              {...props}
-              label={author.displayName[0]}
-              style={{ backgroundColor: colors.secondaryContainer }}
-              labelStyle={{ color: colors.onSecondaryContainer }}
-            />
+            <TouchableOpacity onPress={navigateToProfile}>
+              <Avatar.Text
+                {...props}
+                label={author.displayName[0]}
+                style={{ backgroundColor: colors.secondaryContainer }}
+                labelStyle={{ color: colors.onSecondaryContainer }}
+              />
+            </TouchableOpacity>
           ) : null
         }
         right={(props) =>
-          (isOwner || isModmin) && !editing && (
-            <View style={{ flexDirection: 'row' }}>
-              <IconButton {...props} icon="pencil" onPress={() => setEditing(true)} />
+          (isOwner || isModmin) &&
+          !editing && (
+            <View style={{ flexDirection: "row" }}>
+              <IconButton
+                {...props}
+                icon="pencil"
+                onPress={() => setEditing(true)}
+              />
               <IconButton {...props} icon="delete" onPress={confirmDelete} />
             </View>
           )
@@ -78,7 +116,11 @@ const CommentCard = ({ user: author, createdAt, content, onDelete, onUpdate }) =
               <Button mode="text" onPress={() => setEditing(false)}>
                 Cancel
               </Button>
-              <Button mode="contained" onPress={handleSave} disabled={!editedContent.trim()}>
+              <Button
+                mode="contained"
+                onPress={handleSave}
+                disabled={!editedContent.trim()}
+              >
                 Save
               </Button>
             </View>
@@ -100,8 +142,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     gap: 8,
   },
 });
