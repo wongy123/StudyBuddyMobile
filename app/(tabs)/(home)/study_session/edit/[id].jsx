@@ -65,7 +65,12 @@ const EditSessionScreen = () => {
         title: result.title,
         description: result.description,
         courseCode: result.courseCode || "",
-        date: new Date(result.date).toISOString().split("T")[0],
+        date: new Date(result.date).toLocaleDateString("en-AU", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  year: "numeric"
+}),
         startTime: result.startTime,
         endTime: result.endTime,
         location: result.location,
@@ -85,18 +90,24 @@ const EditSessionScreen = () => {
     setPicker({ show: true, mode, field });
   };
 
-  const onDateTimeChange = (event, selectedDate) => {
-    setPicker({ show: false, mode: "date", field: "" });
-    if (event.type !== "set" || !selectedDate) return;
+const onDateTimeChange = (event, selectedDate) => {
+  setPicker({ show: false, mode: "date", field: "" });
+  if (event.type !== "set" || !selectedDate) return;
 
-    const field = picker.field;
-    const formatted =
-      picker.mode === "date"
-        ? selectedDate.toISOString().split("T")[0]
-        : selectedDate.toTimeString().slice(0, 5);
+  const field = picker.field;
 
-    setForm((prev) => ({ ...prev, [field]: formatted }));
-  };
+  const formatted =
+    picker.mode === "date"
+      ? selectedDate.toLocaleDateString("en-AU", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })
+      : selectedDate.toTimeString().slice(0, 5);
+
+  setForm((prev) => ({ ...prev, [field]: formatted }));
+};
 
   const handleChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
