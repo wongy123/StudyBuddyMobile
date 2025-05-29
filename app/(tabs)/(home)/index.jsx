@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Keyboard,
   RefreshControl,
+  Platform,
 } from "react-native";
 import {
   Text,
@@ -179,6 +180,10 @@ function HomeScreen() {
         onDismiss={hideSnack}
         duration={2500}
         style={{
+          position: "absolute",
+          bottom: Platform.OS === "android" ? 0 : 32,
+          left: 16,
+          right: 16,
           backgroundColor:
             snack.severity === "error" ? colors.errorContainer : "green",
         }}
