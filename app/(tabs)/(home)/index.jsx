@@ -20,19 +20,17 @@ import { useUser } from "@hooks/useUser";
 const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 const PAGE_SIZE = 5;
 
-export default function HomeScreen() {
+function HomeScreen() {
   const { colors } = useTheme();
-  const { token, displayName, user } = useUser();
+  const { token, user } = useUser();
   const listRef = useRef(null);
 
   const [sessions, setSessions] = useState([]);
   const [error, setError] = useState(null);
-
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("asc");
-
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -235,3 +233,5 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
 });
+
+export default HomeScreen;

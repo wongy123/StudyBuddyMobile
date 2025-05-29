@@ -66,15 +66,21 @@ const StudySessionCard = ({
           subtitleStyle={{ color: colors.onSurfaceVariant }}
           right={() =>
             createdBy && (
-              <Avatar.Text
-                size={36}
-                label={createdBy.displayName[0]}
-                style={{
-                  backgroundColor: colors.secondaryContainer,
-                  marginHorizontal: 16,
+              <TouchableOpacity
+                onPress={() => {
+                  router.push(`/profile/${createdBy._id}`);
                 }}
-                labelStyle={{ color: colors.onSecondaryContainer }}
-              />
+              >
+                <Avatar.Text
+                  size={36}
+                  label={createdBy.displayName[0]}
+                  style={{
+                    backgroundColor: colors.secondaryContainer,
+                    marginHorizontal: 16,
+                  }}
+                  labelStyle={{ color: colors.onSecondaryContainer }}
+                />
+              </TouchableOpacity>
             )
           }
         />

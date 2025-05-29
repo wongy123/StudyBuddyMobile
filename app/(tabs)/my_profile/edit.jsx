@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 
 const baseUrl = 'https://n11941073.ifn666.com/StudyBuddy';
 
-export default function EditProfileScreen() {
+const EditProfileScreen = () => {
   const { user, token } = useUser();
   const { colors } = useTheme();
   const router = useRouter();
@@ -62,7 +62,7 @@ export default function EditProfileScreen() {
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || 'Failed to update profile');
-      router.back(); // Go back to profile page
+      router.back();
     } catch (err) {
       Alert.alert('Update failed', err.message);
     } finally {
@@ -87,7 +87,7 @@ export default function EditProfileScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}  style={{ backgroundColor: colors.background }}>
+    <ScrollView contentContainerStyle={styles.container} style={{ backgroundColor: colors.background }}>
       <TextInput
         label="Display Name"
         mode="outlined"
@@ -121,7 +121,7 @@ export default function EditProfileScreen() {
       </Button>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -138,3 +138,5 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
+
+export default EditProfileScreen;

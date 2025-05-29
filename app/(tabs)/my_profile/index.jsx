@@ -9,7 +9,7 @@ import JoinedSessions from "@components/Profile/JoinedSessions";
 
 const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
-export default function MyProfileScreen() {
+const MyProfileScreen = () => {
   const { token, user } = useUser();
   const { logout } = useAuth();
   const { colors } = useTheme();
@@ -39,6 +39,7 @@ export default function MyProfileScreen() {
       if (user?.id && token) fetchProfile();
     }, [user, token])
   );
+
   if (!user || !token) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
@@ -46,6 +47,7 @@ export default function MyProfileScreen() {
       </View>
     );
   }
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -59,10 +61,14 @@ export default function MyProfileScreen() {
           >
             Edit
           </Button>
-          <Button mode="contained" onPress={() => {
-    logout();
-    router.replace("/(tabs)/(home)"); 
-  }} buttonColor={colors.error}>
+          <Button
+            mode="contained"
+            onPress={() => {
+              logout();
+              router.replace("/(tabs)/(home)");
+            }}
+            buttonColor={colors.error}
+          >
             Log Out
           </Button>
         </View>
@@ -84,7 +90,7 @@ export default function MyProfileScreen() {
       )}
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -105,3 +111,5 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
+
+export default MyProfileScreen;
