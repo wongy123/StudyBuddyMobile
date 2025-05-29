@@ -34,7 +34,7 @@ const EditSessionScreen = () => {
     title: "",
     description: "",
     courseCode: "",
-    date: "",
+    date: new Date(),
     startTime: "",
     endTime: "",
     location: "",
@@ -65,12 +65,7 @@ const EditSessionScreen = () => {
         title: result.title,
         description: result.description,
         courseCode: result.courseCode || "",
-        date: new Date(result.date).toLocaleDateString("en-AU", {
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  year: "numeric"
-}),
+        date: new Date(result.date),
         startTime: result.startTime,
         endTime: result.endTime,
         location: result.location,
@@ -90,24 +85,11 @@ const EditSessionScreen = () => {
     setPicker({ show: true, mode, field });
   };
 
-const onDateTimeChange = (event, selectedDate) => {
-  setPicker({ show: false, mode: "date", field: "" });
-  if (event.type !== "set" || !selectedDate) return;
-
-  const field = picker.field;
-
-  const formatted =
-    picker.mode === "date"
-      ? selectedDate.toLocaleDateString("en-AU", {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        })
-      : selectedDate.toTimeString().slice(0, 5);
-
-  setForm((prev) => ({ ...prev, [field]: formatted }));
-};
+  const onDateTimeChange = (event, selectedDate) => {
+    setPicker({ show: false, mode: "date", field: "" });
+    if (event.type !== "set" || !selectedDate) return;
+    setForm((prev) => ({ ...prev, [picker.field]: selectedDate }));
+  };
 
   const handleChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -116,13 +98,20 @@ const onDateTimeChange = (event, selectedDate) => {
   const handleSubmit = async () => {
     setSaving(true);
     try {
+      const isoDate = form.date.toISOString().slice(0, 10);
+
+      const payload = {
+        ...form,
+        date: isoDate,
+      };
+
       const res = await fetch(`${baseUrl}/api/sessions/${sessionId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       const result = await res.json();
@@ -195,7 +184,12 @@ const onDateTimeChange = (event, selectedDate) => {
               <TextInput
                 label="Date *"
                 mode="outlined"
-                value={form.date}
+                value={form.date.toLocaleDateString("en-AU", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
                 editable={false}
                 right={
                   <TextInput.Icon
@@ -205,6 +199,7 @@ const onDateTimeChange = (event, selectedDate) => {
                 }
               />
             </Pressable>
+
             <Pressable onPress={() => showPicker("time", "startTime")}>
               <TextInput
                 label="Start Time *"
@@ -265,7 +260,7 @@ const onDateTimeChange = (event, selectedDate) => {
           {picker.show && (
             <DateTimePicker
               mode={picker.mode}
-              value={new Date()}
+              value={form[picker.field] || new Date()}
               display="default"
               is24Hour
               onChange={onDateTimeChange}

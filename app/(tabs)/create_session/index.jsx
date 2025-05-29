@@ -33,7 +33,8 @@ const CreateSessionScreen = () => {
     title: "",
     description: "",
     courseCode: "",
-    date: "",
+    date: "",         // for display
+    rawDate: null,    // for backend
     startTime: "",
     endTime: "",
     location: "",
@@ -44,34 +45,43 @@ const CreateSessionScreen = () => {
     mode: "date",
     field: "",
   });
+
   const [snack, setSnack] = useState({
     open: false,
     message: "",
     error: false,
   });
+
   const [loading, setLoading] = useState(false);
 
   const showPicker = (mode, field) => {
     setPicker({ show: true, mode, field });
   };
 
-const onDateTimeChange = (event, selectedDate) => {
-  setPicker({ show: false, mode: "date", field: "" });
-  if (event.type !== "set" || !selectedDate) return;
+  const onDateTimeChange = (event, selectedDate) => {
+    setPicker({ show: false, mode: "date", field: "" });
+    if (event.type !== "set" || !selectedDate) return;
 
-  const field = picker.field;
-  const formatted =
-    picker.mode === "date"
-      ? selectedDate.toLocaleDateString("en-AU", {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        })
-      : selectedDate.toTimeString().slice(0, 5);
+    const field = picker.field;
 
-  setForm((prev) => ({ ...prev, [field]: formatted }));
-};
+    if (picker.mode === "date") {
+      const formatted = selectedDate.toLocaleDateString("en-AU", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+
+      setForm((prev) => ({
+        ...prev,
+        date: formatted,
+        rawDate: selectedDate,
+      }));
+    } else {
+      const timeStr = selectedDate.toTimeString().slice(0, 5);
+      setForm((prev) => ({ ...prev, [field]: timeStr }));
+    }
+  };
 
   const handleChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -80,37 +90,51 @@ const onDateTimeChange = (event, selectedDate) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      if (!form.rawDate) throw new Error("Date is missing or invalid");
+
+      const isoDate = form.rawDate.toISOString().split("T")[0]; // YYYY-MM-DD
+
+      const payload = {
+        ...form,
+        date: isoDate,
+      };
+      delete payload.rawDate;
+
       const res = await fetch(`${baseUrl}/api/sessions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       const result = await res.json();
-      if (!res.ok)
+      if (!res.ok) {
         throw new Error(
           result.errors?.[0]?.msg ||
             result.message ||
             "Failed to create session"
         );
+      }
 
       setSnack({
         open: true,
         message: "Session created successfully!",
         error: false,
       });
+
       setForm({
         title: "",
         description: "",
         courseCode: "",
         date: "",
+        rawDate: null,
         startTime: "",
         endTime: "",
         location: "",
       });
+
       router.replace(`/study_session/${result._id}`);
     } catch (err) {
       setSnack({ open: true, message: err.message, error: true });
@@ -145,7 +169,6 @@ const onDateTimeChange = (event, selectedDate) => {
               Create Study Session
             </Text>
 
-            {/* Text Inputs */}
             <TextInput
               label="Title *"
               mode="outlined"
@@ -167,7 +190,6 @@ const onDateTimeChange = (event, selectedDate) => {
               onChangeText={(t) => handleChange("courseCode", t)}
             />
 
-            {/* Date Picker */}
             <Pressable onPress={() => showPicker("date", "date")}>
               <TextInput
                 label="Date *"
@@ -183,7 +205,6 @@ const onDateTimeChange = (event, selectedDate) => {
               />
             </Pressable>
 
-            {/* Start Time Picker */}
             <Pressable onPress={() => showPicker("time", "startTime")}>
               <TextInput
                 label="Start Time *"
@@ -199,7 +220,6 @@ const onDateTimeChange = (event, selectedDate) => {
               />
             </Pressable>
 
-            {/* End Time Picker */}
             <Pressable onPress={() => showPicker("time", "endTime")}>
               <TextInput
                 label="End Time *"
@@ -248,7 +268,6 @@ const onDateTimeChange = (event, selectedDate) => {
             </Button>
           </ScrollView>
 
-          {/* DateTime Picker */}
           {picker.show && (
             <DateTimePicker
               mode={picker.mode}

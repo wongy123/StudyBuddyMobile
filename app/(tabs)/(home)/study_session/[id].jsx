@@ -109,7 +109,7 @@ export default function StudySessionScreen() {
       setSnackbarVisible(true);
 
       // Slight delay before navigating back
-      setTimeout(() => router.back(), 2000);
+      setTimeout(() => router.replace("/(tabs)/(home)"), 1500);
     } catch (err) {
       Alert.alert("Delete failed", err.message);
     }
