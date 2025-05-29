@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   SafeAreaView,
   KeyboardAvoidingView,
@@ -16,13 +16,14 @@ import {
   Text,
   Snackbar,
 } from "react-native-paper";
+import { useRouter } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from "@hooks/useUser";
-import { useRef } from "react";
 
 const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const CreateSessionScreen = () => {
+  const router = useRouter();
   const { token } = useUser();
   const { colors } = useTheme();
   const scrollRef = useRef(null);
@@ -105,6 +106,7 @@ const CreateSessionScreen = () => {
         endTime: "",
         location: "",
       });
+      router.replace(`/study_session/${result._id}`);
     } catch (err) {
       setSnack({ open: true, message: err.message, error: true });
     } finally {
