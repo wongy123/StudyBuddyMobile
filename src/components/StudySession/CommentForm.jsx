@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, Keyboard } from 'react-native';
 import { TextInput, Button, Text, useTheme } from 'react-native-paper';
 
 const MAX_LENGTH = 500;
@@ -8,6 +8,7 @@ const CommentForm = ({ onSubmit }) => {
   const { colors } = useTheme();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const inputRef = useRef(null);
 
   const handlePost = async () => {
     if (!content.trim()) return;
@@ -15,6 +16,8 @@ const CommentForm = ({ onSubmit }) => {
     try {
       await onSubmit(content.trim());
       setContent('');
+      inputRef.current?.blur();
+      Keyboard.dismiss();
     } catch (err) {
       console.error(err);
     } finally {
@@ -27,6 +30,7 @@ const CommentForm = ({ onSubmit }) => {
   return (
     <View style={styles.container}>
       <TextInput
+        ref={inputRef}
         mode="outlined"
         placeholder="Write a comment..."
         value={content}

@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
   container: {
     gap: 8,
     paddingBottom: 16,
+    marginBottom: 16
   },
 });
 

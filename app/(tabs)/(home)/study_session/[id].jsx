@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 96,
   },
   fixedBottom: {
     position: "absolute",
