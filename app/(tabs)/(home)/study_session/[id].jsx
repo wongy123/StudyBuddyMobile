@@ -8,10 +8,14 @@ import {
   ScrollView,
   Platform,
   Alert,
-
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ActivityIndicator, Text, useTheme,   Snackbar } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Text,
+  useTheme,
+  Snackbar,
+} from "react-native-paper";
 import StudySessionDetails from "@components/StudySession/StudySessionDetails";
 import CommentList from "@components/StudySession/CommentList";
 import CommentForm from "@components/StudySession/CommentForm";
@@ -112,56 +116,62 @@ export default function StudySessionScreen() {
   };
 
   const handleEdit = () => {
-    router.push(`/edit_session/${sessionId}`);
+    router.push(`/study_session/edit/${sessionId}`);
   };
 
- return (
-  <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 104}
-  >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.wrapper}>
-        <ScrollView
-          style={{ flex: 1, backgroundColor: colors.background }}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <StudySessionDetails
-            session={session}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-          />
-          <CommentList
-            sessionId={sessionId}
-            token={token}
-            refreshKey={refreshFlag}
-          />
-        </ScrollView>
-
-        <View
-          style={[
-            styles.fixedBottom,
-            { backgroundColor: colors.elevation.level1 },
-          ]}
-        >
-          <CommentForm onSubmit={handleCommentSubmit} />
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
-
-    <Snackbar
-      visible={snackbarVisible}
-      onDismiss={() => setSnackbarVisible(false)}
-      duration={2000}
-      action={{ label: "Close", onPress: () => setSnackbarVisible(false), textColor: colors.onSecondaryContainer }}
-      style={{ backgroundColor: colors.secondaryContainer }}
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 104}
     >
-      <Text style={{ color: colors.onSecondaryContainer}}>Session deleted successfully</Text>
-    </Snackbar>
-  </KeyboardAvoidingView>
-);
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={styles.wrapper}>
+          <ScrollView
+            style={{ flex: 1, backgroundColor: colors.background }}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <StudySessionDetails
+              session={session}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
+            <CommentList
+              sessionId={sessionId}
+              token={token}
+              refreshKey={refreshFlag}
+            />
+          </ScrollView>
+
+          <View
+            style={[
+              styles.fixedBottom,
+              { backgroundColor: colors.elevation.level1 },
+            ]}
+          >
+            <CommentForm onSubmit={handleCommentSubmit} />
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={2000}
+        action={{
+          label: "Close",
+          onPress: () => setSnackbarVisible(false),
+          textColor: colors.onSecondaryContainer,
+        }}
+        style={{ backgroundColor: colors.secondaryContainer }}
+      >
+        <Text style={{ color: colors.onSecondaryContainer }}>
+          Session deleted successfully
+        </Text>
+      </Snackbar>
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({

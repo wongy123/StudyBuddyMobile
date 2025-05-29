@@ -18,8 +18,9 @@ const HomeLayout = () => {
       }}
     >
       <Stack.Screen name="index" options={{ title: "Home" }} />
-      <Stack.Screen name="study_session" options={{ title: "Study Session" }} />
-      <Stack.Screen name="profile" options={{ title: "Profile" }} />
+      <Stack.Screen name="study_session/[id]" options={{ title: "Study Session" }} />
+      <Stack.Screen name="study_session/edit/[id]" options={{ title: "Edit Session" }} />
+      <Stack.Screen name="profile/[id]" options={{ title: "Profile" }} />
     </Stack>
   );
 };
