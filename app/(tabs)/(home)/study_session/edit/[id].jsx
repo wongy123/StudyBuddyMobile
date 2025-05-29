@@ -123,6 +123,7 @@ const EditSessionScreen = () => {
         message: "Session updated successfully!",
         error: false,
       });
+      router.back();
       router.replace(`/study_session/${sessionId}`);
     } catch (err) {
       setSnack({ open: true, message: err.message, error: true });
