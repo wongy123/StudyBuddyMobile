@@ -7,9 +7,11 @@ import {
   Keyboard,
   ScrollView,
   Platform,
+  Alert,
+
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, Text, useTheme } from "react-native-paper";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { ActivityIndicator, Text, useTheme,   Snackbar } from "react-native-paper";
 import StudySessionDetails from "@components/StudySession/StudySessionDetails";
 import CommentList from "@components/StudySession/CommentList";
 import CommentForm from "@components/StudySession/CommentForm";
@@ -18,6 +20,7 @@ import { useUser } from "@hooks/useUser";
 const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 export default function StudySessionScreen() {
+  const router = useRouter();
   const { id: sessionId } = useLocalSearchParams();
   const { colors } = useTheme();
   const { token } = useUser();
@@ -26,6 +29,7 @@ export default function StudySessionScreen() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
 
   const fetchSession = async () => {
     try {
@@ -83,34 +87,81 @@ export default function StudySessionScreen() {
     );
   }
 
-  return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 104}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={styles.wrapper}>
-          <ScrollView
-            style={{ flex: 1, backgroundColor: colors.background }}
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-          >
-            <StudySessionDetails session={session} />
-            <CommentList
-              sessionId={sessionId}
-              token={token}
-              refreshKey={refreshFlag}
-            />
-          </ScrollView>
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`${baseUrl}/api/sessions/${sessionId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-          <View style={[styles.fixedBottom, { backgroundColor: colors.elevation.level1 }]}>
-            <CommentForm onSubmit={handleCommentSubmit} />
-          </View>
+      if (!res.ok) {
+        const text = await res.text();
+        const message = text
+          ? JSON.parse(text).message
+          : "Failed to delete session";
+        throw new Error(message);
+      }
+
+      setSnackbarVisible(true);
+
+      // Slight delay before navigating back
+      setTimeout(() => router.back(), 2000);
+    } catch (err) {
+      Alert.alert("Delete failed", err.message);
+    }
+  };
+
+  const handleEdit = () => {
+    router.push(`/edit_session/${sessionId}`);
+  };
+
+ return (
+  <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 104}
+  >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.wrapper}>
+        <ScrollView
+          style={{ flex: 1, backgroundColor: colors.background }}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <StudySessionDetails
+            session={session}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
+          <CommentList
+            sessionId={sessionId}
+            token={token}
+            refreshKey={refreshFlag}
+          />
+        </ScrollView>
+
+        <View
+          style={[
+            styles.fixedBottom,
+            { backgroundColor: colors.elevation.level1 },
+          ]}
+        >
+          <CommentForm onSubmit={handleCommentSubmit} />
         </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
-  );
+      </View>
+    </TouchableWithoutFeedback>
+
+    <Snackbar
+      visible={snackbarVisible}
+      onDismiss={() => setSnackbarVisible(false)}
+      duration={2000}
+      action={{ label: "Close", onPress: () => setSnackbarVisible(false), textColor: colors.onSecondaryContainer }}
+      style={{ backgroundColor: colors.secondaryContainer }}
+    >
+      <Text style={{ color: colors.onSecondaryContainer}}>Session deleted successfully</Text>
+    </Snackbar>
+  </KeyboardAvoidingView>
+);
 }
 
 const styles = StyleSheet.create({

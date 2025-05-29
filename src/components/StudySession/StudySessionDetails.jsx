@@ -1,18 +1,32 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Text, Avatar, Divider, useTheme } from 'react-native-paper';
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Text, Avatar, Divider, useTheme, Button } from 'react-native-paper';
 import { formatDate } from '@utils/formatDate';
 import { useUser } from '@hooks/useUser';
 import { useRouter } from 'expo-router';
 
-const StudySessionDetails = ({ session }) => {
+const StudySessionDetails = ({ session, onDelete, onEdit }) => {
   const { colors } = useTheme();
   const { user } = useUser();
   const router = useRouter();
 
+  const isOwner = user?.id === session.createdBy?._id;
+
   const navigateToProfile = (targetId) => {
     if (!targetId) return;
     router.push(targetId === user?.id ? '/my_profile' : `/profile/${targetId}`);
+  };
+
+  const confirmDelete = () => {
+    Alert.alert(
+      'Delete Session',
+      'Are you sure you want to delete this study session?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: () => onDelete?.() },
+      ],
+      { cancelable: true }
+    );
   };
 
   return (
@@ -85,6 +99,27 @@ const StudySessionDetails = ({ session }) => {
       </View>
 
       <Divider style={{ marginVertical: 16 }} />
+            {isOwner && (
+        <View style={styles.actions}>
+          <Button
+            icon="pencil"
+            mode="outlined"
+            onPress={() => onEdit?.()}
+            textColor={colors.primary}
+          >
+            Edit
+          </Button>
+          <Button
+            icon="delete"
+            mode="contained"
+            onPress={confirmDelete}
+            buttonColor={colors.error}
+            textColor={colors.onError}
+          >
+            Delete
+          </Button>
+        </View>
+      )}
     </View>
   );
 };
@@ -111,6 +146,12 @@ const styles = StyleSheet.create({
   participant: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+    marginTop: 8,
   },
 });
 
