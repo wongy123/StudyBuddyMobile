@@ -74,7 +74,7 @@ const PublicProfileScreen = () => {
       style={{ backgroundColor: colors.background }}
     >
       <ProfileInfo userId={id} token={token} />
-      <JoinedSessions user={{ id }} token={token} />
+      <JoinedSessions key={id} userId={id} token={token} />
     </ScrollView>
   );
 };

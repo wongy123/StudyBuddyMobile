@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import {
   ActivityIndicator,
@@ -7,41 +7,48 @@ import {
   Snackbar,
 } from "react-native-paper";
 import StudySessionCard from "@components/StudySessionCard";
+import { useUser } from "@hooks/useUser";
 
 const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
-const JoinedSessions = ({ user, token }) => {
+const JoinedSessions = ({ userId, token }) => {
+  const { user: currentUser } = useUser();
   const { colors } = useTheme();
+
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [snack, setSnack] = useState({
     open: false,
     message: "",
-    error: false,
+    severity: "success",
   });
 
-  const fetchSessions = async () => {
+  const showSnack = (message, severity = "success") =>
+    setSnack({ open: true, message, severity });
+
+  const hideSnack = () => setSnack((prev) => ({ ...prev, open: false }));
+
+  const fetchSessions = useCallback(async () => {
     try {
-      const res = await fetch(`${baseUrl}/api/sessions/joined/${user.id}`, {
+      setLoading(true);
+      const res = await fetch(`${baseUrl}/api/sessions/joined/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Failed to load sessions");
       setSessions(result.data);
+      setError(null);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
-
-  const showSnack = (message, isError = false) =>
-    setSnack({ open: true, message, error: isError });
+  }, [userId, token]);
 
   useEffect(() => {
-    if (user?.id && token) fetchSessions();
-  }, [user?.id, token]);
+    if (userId && token) fetchSessions();
+  }, [fetchSessions]);
 
   if (loading) {
     return (
@@ -75,28 +82,26 @@ const JoinedSessions = ({ user, token }) => {
         <StudySessionCard
           key={session._id}
           {...session}
-          user={user}
+          user={currentUser} 
           token={token}
-          onJoinSuccess={() => {
-            fetchSessions();
-            showSnack("Session updated successfully");
-          }}
+          onJoinSuccess={fetchSessions}
+          showSnack={showSnack}
         />
       ))}
       <Snackbar
         visible={snack.open}
-        onDismiss={() => setSnack({ ...snack, open: false })}
+        onDismiss={hideSnack}
         duration={2500}
         style={{
           position: "absolute",
-          bottom: Platform.OS === "android" ? 0 : 32, // 👈 tweak this for tab bar + margin
+          bottom: Platform.OS === "android" ? 0 : 32,
           left: 16,
           right: 16,
-          backgroundColor: snack.error ? colors.error : "green",
+          backgroundColor: snack.severity === "error" ? colors.error : "green",
         }}
         action={{
           label: "Close",
-          onPress: () => setSnack({ ...snack, open: false }),
+          onPress: hideSnack,
           labelStyle: { color: "white" },
         }}
       >
@@ -107,17 +112,9 @@ const JoinedSessions = ({ user, token }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 16,
-  },
-  text: {
-    marginTop: 12,
-    textAlign: "center",
-  },
-  center: {
-    paddingVertical: 32,
-    alignItems: "center",
-  },
+  container: { marginTop: 16 },
+  text: { marginTop: 12, textAlign: "center" },
+  center: { paddingVertical: 32, alignItems: "center" },
 });
 
 export default JoinedSessions;
