@@ -1,69 +1,27 @@
-import React, { useCallback, useState } from "react";
-import { ScrollView, View, StyleSheet } from "react-native";
+import React from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Text, useTheme, ActivityIndicator } from "react-native-paper";
 import { useUser } from "@hooks/useUser";
-import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import ProfileInfo from "@components/Profile/ProfileInfo";
 import JoinedSessions from "@components/Profile/JoinedSessions";
-
-const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const PublicProfileScreen = () => {
   const { user, token } = useUser();
   const { id } = useLocalSearchParams();
-  const { colors } = useTheme();
   const router = useRouter();
+  const { colors } = useTheme();
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // If viewing own profile, redirect
+  if (user && id === user.id) {
+    router.replace("/my_profile");
+    return null;
+  }
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!token || !user) return;
-      if (id === user.id) {
-        router.replace("/my_profile"); // Redirect to own profile tab
-        return;
-      }
-
-      const fetchUser = async () => {
-        try {
-          setLoading(true);
-          const res = await fetch(`${baseUrl}/api/users/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const result = await res.json();
-          if (!res.ok) throw new Error(result.message || "User not found");
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchUser();
-    }, [id, user, token])
-  );
-
-  if (!user || !token) {
+  if (!user || !token || !id) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
         <ActivityIndicator animating size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator animating size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.center}>
-        <Text style={{ color: colors.error }}>{error}</Text>
       </View>
     );
   }
@@ -74,7 +32,7 @@ const PublicProfileScreen = () => {
       style={{ backgroundColor: colors.background }}
     >
       <ProfileInfo userId={id} token={token} />
-      <JoinedSessions key={id} userId={id} token={token} />
+      <JoinedSessions userId={id} token={token} />
     </ScrollView>
   );
 };

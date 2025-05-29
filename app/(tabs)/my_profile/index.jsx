@@ -85,7 +85,7 @@ const MyProfileScreen = () => {
       ) : (
         <>
           <ProfileInfo userId={user.id} token={token} />
-          <JoinedSessions user={user} token={token} />
+          <JoinedSessions userId={user.id} token={token} />
         </>
       )}
     </ScrollView>
