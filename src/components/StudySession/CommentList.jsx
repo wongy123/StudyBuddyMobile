@@ -97,7 +97,7 @@ const CommentList = ({ sessionId, token, refreshKey }) => {
     <View style={styles.container}>
       <Text
         variant="titleMedium"
-        style={{ marginBottom: 8, color: colors.onSurface }}
+        style={{ marginBottom: 8, color: colors.onSurface, marginHorizontal: 16  }}
       >
         💬 Comments
       </Text>
@@ -105,7 +105,7 @@ const CommentList = ({ sessionId, token, refreshKey }) => {
       {error && <Text style={{ color: colors.error }}>{error}</Text>}
 
       {comments.length === 0 && !error ? (
-        <Text style={{ color: colors.onSurfaceVariant }}>
+        <Text style={{ color: colors.onSurfaceVariant, marginHorizontal: 16 }}>
           No one has commented yet.
         </Text>
       ) : (

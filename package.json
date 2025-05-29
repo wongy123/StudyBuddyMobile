@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "^8.4.1",
     "date-fns": "^4.1.0",
     "email-validator": "^2.0.4",
     "expo": "~53.0.9",
