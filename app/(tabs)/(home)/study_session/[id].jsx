@@ -109,7 +109,10 @@ const StudySessionScreen = () => {
       setSnackbarVisible(true);
 
       // Slight delay before navigating back
-      setTimeout(() => router.replace("/(tabs)/(home)"), 1500);
+      setTimeout(() => router.back(), 1500);
+      setTimeout(() => {
+        router.replace("/(tabs)/(home)");
+      }, 1550);
     } catch (err) {
       Alert.alert("Delete failed", err.message);
     }
