@@ -31,7 +31,7 @@ const PublicProfileScreen = () => {
       contentContainerStyle={styles.container}
       style={{ backgroundColor: colors.background }}
     >
-      <ProfileInfo userId={id} token={token} />
+      <ProfileInfo userId={id} token={token} currentUser={user} />
       <JoinedSessions userId={id} token={token} />
     </ScrollView>
   );

@@ -8,7 +8,6 @@ import ProfileInfo from "@components/Profile/ProfileInfo";
 import JoinedSessions from "@components/Profile/JoinedSessions";
 import { baseUrl } from "@constants/api";
 
-
 const MyProfileScreen = () => {
   const { token, user } = useUser();
   const { logout } = useAuth();
@@ -53,27 +52,6 @@ const MyProfileScreen = () => {
       contentContainerStyle={styles.container}
       style={{ backgroundColor: colors.background }}
     >
-      <View style={styles.header}>
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <Button
-            mode="outlined"
-            onPress={() => router.push("/my_profile/edit")}
-          >
-            Edit
-          </Button>
-          <Button
-            mode="contained"
-            onPress={() => {
-              logout();
-              router.replace("/(tabs)/(home)");
-            }}
-            buttonColor={colors.error}
-          >
-            Log Out
-          </Button>
-        </View>
-      </View>
-
       {loading ? (
         <View style={styles.center}>
           <ActivityIndicator animating size="large" color={colors.primary} />
@@ -84,7 +62,26 @@ const MyProfileScreen = () => {
         </Text>
       ) : (
         <>
-          <ProfileInfo userId={user.id} token={token} />
+          <View style={styles.header}>
+            <Button
+              mode="outlined"
+              onPress={() => router.push("/my_profile/edit")}
+            >
+              Edit
+            </Button>
+            <Button
+              mode="contained"
+              onPress={() => {
+                logout();
+                router.replace("/(tabs)/(home)");
+              }}
+              buttonColor={colors.error}
+            >
+              Log Out
+            </Button>
+          </View>
+
+          <ProfileInfo userId={user.id} token={token} currentUser={user} />
           <JoinedSessions userId={user.id} token={token} />
         </>
       )}
@@ -95,14 +92,13 @@ const MyProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     gap: 16,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   header: {
-    position: "absolute",
-    top: 8,
-    right: 16,
     flexDirection: "row",
     gap: 8,
-    zIndex: 10,
+    justifyContent: "flex-end",
   },
   center: {
     flex: 1,
