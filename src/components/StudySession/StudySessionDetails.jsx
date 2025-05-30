@@ -8,6 +8,8 @@ import {
   useTheme,
   Button,
   ActivityIndicator,
+  Menu,
+  IconButton,
 } from "react-native-paper";
 import { formatDate } from "@utils/formatDate";
 import { useUser } from "@hooks/useUser";
@@ -21,6 +23,10 @@ const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
 
   const isOwner = user?.id === session.createdBy?._id;
   const isParticipant = session.participants.some((p) => p._id === user?.id);
+
+  const [menuVisible, setMenuVisible] = useState(false);
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
 
   const [snack, setSnack] = useState({
     open: false,
@@ -103,7 +109,7 @@ const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
         >
           <View style={styles.creatorInfo}>
             <Avatar.Text
-              size={36}
+              size={32}
               label={session.createdBy.displayName[0]}
               style={{ backgroundColor: colors.secondaryContainer }}
               labelStyle={{ color: colors.onSecondaryContainer }}
@@ -141,40 +147,51 @@ const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
         ))}
       </View>
 
-      <Divider style={{ marginVertical: 16 }} />
+      <Divider style={{ marginVertical: 8 }} />
       {token && (
-  <Button
-    mode="contained"
-    onPress={handleJoinOrLeave}
-    loading={loading}
-    disabled={loading}
-    icon={isParticipant ? "account-minus" : "account-plus"}
-    buttonColor={isParticipant ? colors.error : colors.primary}
-    textColor={colors.onPrimary}
-    style={{ marginTop: 8 }}
-  >
-    {isParticipant ? "Leave Session" : "Join Session"}
-  </Button>
-)}
-      {isOwner && (
-        <View style={styles.actions}>
+        <View style={styles.bottomActions}>
           <Button
-            icon="pencil"
-            mode="outlined"
-            onPress={() => onEdit?.()}
-            textColor={colors.primary}
-          >
-            Edit
-          </Button>
-          <Button
-            icon="delete"
             mode="contained"
-            onPress={confirmDelete}
-            buttonColor={colors.error}
-            textColor={colors.onError}
+            onPress={handleJoinOrLeave}
+            loading={loading}
+            disabled={loading}
+            icon={isParticipant ? "account-minus" : "account-plus"}
+            buttonColor={isParticipant ? colors.error : colors.primary}
+            textColor={colors.onPrimary}
           >
-            Delete
+            {isParticipant ? "Leave" : "Join"}
           </Button>
+
+          {isOwner && (
+            <Menu
+              visible={menuVisible}
+              onDismiss={closeMenu}
+              anchor={
+                <IconButton
+                  icon="dots-vertical"
+                  onPress={openMenu}
+                  iconColor={colors.onBackground}
+                />
+              }
+            >
+              <Menu.Item
+                onPress={() => {
+                  closeMenu();
+                  onEdit?.();
+                }}
+                leadingIcon="pencil"
+                title="Edit"
+              />
+              <Menu.Item
+                onPress={() => {
+                  closeMenu();
+                  confirmDelete();
+                }}
+                leadingIcon="delete"
+                title="Delete"
+              />
+            </Menu>
+          )}
         </View>
       )}
     </View>
@@ -209,6 +226,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     gap: 12,
     marginTop: 8,
+  },
+  bottomActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });
 
