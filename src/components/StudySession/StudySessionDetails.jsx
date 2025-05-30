@@ -191,7 +191,6 @@ const StudySessionDetails = ({
           <Button
             icon="share-variant"
             onPress={() => {
-              console.log("Pressed share");
               onShare();
             }}
             textColor={colors.primary}

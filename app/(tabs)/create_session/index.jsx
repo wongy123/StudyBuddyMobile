@@ -92,7 +92,9 @@ const CreateSessionScreen = () => {
     try {
       if (!form.rawDate) throw new Error("Date is missing or invalid");
 
-      const isoDate = form.rawDate.toISOString().split("T")[0]; // YYYY-MM-DD
+      const isoDate = form.rawDate.getFullYear() +
+  "-" + String(form.rawDate.getMonth() + 1).padStart(2, "0") +
+  "-" + String(form.rawDate.getDate()).padStart(2, "0"); // YYYY-MM-DD
 
       const payload = {
         ...form,
