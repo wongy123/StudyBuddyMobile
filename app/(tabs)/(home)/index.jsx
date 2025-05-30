@@ -14,11 +14,12 @@ import {
   Button,
   Snackbar,
   useTheme,
+  Banner,
+  Icon,
 } from "react-native-paper";
 import StudySessionCard from "@components/StudySessionCard";
 import { useUser } from "@hooks/useUser";
 import { baseUrl } from "@constants/api";
-
 
 const PAGE_SIZE = 5;
 
@@ -96,11 +97,15 @@ function HomeScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {!token && (
-        <View style={styles.loginPrompt}>
-          <Text variant="titleMedium" style={{ color: colors.onSurface }}>
-            Please log in to join sessions.
+        <Banner
+          visible
+          icon="alert-circle"
+          style={{ backgroundColor: colors.secondaryContainer, marginTop: -8 }}
+        >
+          <Text variant="bodyLarge" style={{ color: colors.onSecondaryContainer }}>
+            Please login to join sessions.
           </Text>
-        </View>
+        </Banner>
       )}
       <FlatList
         ref={listRef}

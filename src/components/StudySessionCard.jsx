@@ -58,7 +58,10 @@ const StudySessionCard = ({
       style={[styles.card, { backgroundColor: colors.surfaceVariant }]}
       elevation={2}
     >
-      <TouchableOpacity onPress={() => router.push(`/study_session/${_id}`)}>
+      <TouchableOpacity
+        onPress={() => token && router.push(`/study_session/${_id}`)}
+        disabled={!token}
+      >
         <Card.Title
           title={title}
           subtitle={`📘 ${courseCode}`}

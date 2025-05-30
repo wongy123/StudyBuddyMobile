@@ -142,7 +142,7 @@ const RegisterScreen = () => {
           Platform.OS === "android" && { paddingBottom: 96 },
         ]}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 96 : 20}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <ScrollView
