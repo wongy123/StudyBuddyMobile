@@ -22,8 +22,6 @@ import CommentForm from "@components/StudySession/CommentForm";
 import { useUser } from "@hooks/useUser";
 import { baseUrl } from "@constants/api";
 
-
-
 const StudySessionScreen = () => {
   const router = useRouter();
   const { id: sessionId } = useLocalSearchParams();
@@ -35,6 +33,7 @@ const StudySessionScreen = () => {
   const [loading, setLoading] = useState(true);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const triggerRefresh = () => setRefreshFlag((prev) => !prev);
 
   const fetchSession = async () => {
     try {
@@ -56,7 +55,7 @@ const StudySessionScreen = () => {
 
   useEffect(() => {
     if (sessionId && token) fetchSession();
-  }, [sessionId, token]);
+  }, [sessionId, token, refreshFlag]);
 
   const handleCommentSubmit = async (content) => {
     const res = await fetch(`${baseUrl}/api/sessions/${sessionId}/comments`, {
@@ -137,6 +136,7 @@ const StudySessionScreen = () => {
               session={session}
               onDelete={handleDelete}
               onEdit={handleEdit}
+              onJoinSuccess={triggerRefresh}
             />
             <CommentList
               sessionId={sessionId}
@@ -173,7 +173,7 @@ const StudySessionScreen = () => {
       </Snackbar>
     </KeyboardAvoidingView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   wrapper: {

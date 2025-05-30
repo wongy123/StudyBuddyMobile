@@ -1,46 +1,84 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { Text, Avatar, Divider, useTheme, Button } from 'react-native-paper';
-import { formatDate } from '@utils/formatDate';
-import { useUser } from '@hooks/useUser';
-import { useRouter } from 'expo-router';
+import React from "react";
+import { useState } from "react";
+import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {
+  Text,
+  Avatar,
+  Divider,
+  useTheme,
+  Button,
+  ActivityIndicator,
+} from "react-native-paper";
+import { formatDate } from "@utils/formatDate";
+import { useUser } from "@hooks/useUser";
+import { useRouter } from "expo-router";
+import { useJoinOrLeaveSession } from "@hooks/useJoinOrLeaveSession";
 
-const StudySessionDetails = ({ session, onDelete, onEdit }) => {
+const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
   const { colors } = useTheme();
-  const { user } = useUser();
+  const { user, token } = useUser();
   const router = useRouter();
 
   const isOwner = user?.id === session.createdBy?._id;
+  const isParticipant = session.participants.some((p) => p._id === user?.id);
 
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const navigateToProfile = (targetId) => {
     if (!targetId) return;
-    router.push(targetId === user?.id ? '/my_profile' : `/profile/${targetId}`);
+    router.push(targetId === user?.id ? "/my_profile" : `/profile/${targetId}`);
   };
 
   const confirmDelete = () => {
     Alert.alert(
-      'Delete Session',
-      'Are you sure you want to delete this study session?',
+      "Delete Session",
+      "Are you sure you want to delete this study session?",
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => onDelete?.() },
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: () => onDelete?.() },
       ],
       { cancelable: true }
     );
   };
+
+  const { handleJoinOrLeave, loading } = useJoinOrLeaveSession({
+    sessionId: session._id,
+    isParticipant,
+    onSuccess: () => {
+      onJoinSuccess?.();
+      setSnack({
+        open: true,
+        message: `Successfully ${
+          isParticipant ? "left" : "joined"
+        } the session!`,
+        severity: "success",
+      });
+    },
+    onError: (msg) => {
+      setSnack({ open: true, message: msg, severity: "error" });
+    },
+  });
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text variant="headlineMedium" style={{ color: colors.onBackground }}>
         {session.title}
       </Text>
-      <Text variant="bodyMedium" style={{ color: colors.onSurfaceVariant, marginBottom: 8 }}>
+      <Text
+        variant="bodyMedium"
+        style={{ color: colors.onSurfaceVariant, marginBottom: 8 }}
+      >
         📘 {session.courseCode}
       </Text>
 
       <Divider style={{ marginVertical: 8 }} />
 
-      <Text variant="bodyLarge" style={{ color: colors.onSurface }}>{session.description}</Text>
+      <Text variant="bodyLarge" style={{ color: colors.onSurface }}>
+        {session.description}
+      </Text>
 
       <View style={styles.detailGroup}>
         <Text style={{ color: colors.onSurfaceVariant }}>
@@ -60,7 +98,9 @@ const StudySessionDetails = ({ session, onDelete, onEdit }) => {
         🎓 Created by
       </Text>
       {session.createdBy ? (
-        <TouchableOpacity onPress={() => navigateToProfile(session.createdBy._id)}>
+        <TouchableOpacity
+          onPress={() => navigateToProfile(session.createdBy._id)}
+        >
           <View style={styles.creatorInfo}>
             <Avatar.Text
               size={36}
@@ -82,7 +122,10 @@ const StudySessionDetails = ({ session, onDelete, onEdit }) => {
       </Text>
       <View style={styles.participants}>
         {session.participants.map((p) => (
-          <TouchableOpacity key={p._id} onPress={() => navigateToProfile(p._id)}>
+          <TouchableOpacity
+            key={p._id}
+            onPress={() => navigateToProfile(p._id)}
+          >
             <View style={styles.participant}>
               <Avatar.Text
                 size={32}
@@ -99,7 +142,21 @@ const StudySessionDetails = ({ session, onDelete, onEdit }) => {
       </View>
 
       <Divider style={{ marginVertical: 16 }} />
-            {isOwner && (
+      {token && (
+  <Button
+    mode="contained"
+    onPress={handleJoinOrLeave}
+    loading={loading}
+    disabled={loading}
+    icon={isParticipant ? "account-minus" : "account-plus"}
+    buttonColor={isParticipant ? colors.error : colors.primary}
+    textColor={colors.onPrimary}
+    style={{ marginTop: 8 }}
+  >
+    {isParticipant ? "Leave Session" : "Join Session"}
+  </Button>
+)}
+      {isOwner && (
         <View style={styles.actions}>
           <Button
             icon="pencil"
@@ -135,8 +192,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   creatorInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   participants: {
@@ -144,12 +201,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   participant: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     gap: 12,
     marginTop: 8,
   },
