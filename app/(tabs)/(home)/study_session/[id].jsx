@@ -8,6 +8,7 @@ import {
   ScrollView,
   Platform,
   Alert,
+  Share,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
@@ -21,6 +22,7 @@ import CommentList from "@components/StudySession/CommentList";
 import CommentForm from "@components/StudySession/CommentForm";
 import { useUser } from "@hooks/useUser";
 import { baseUrl } from "@constants/api";
+import { formatDate } from "@utils/formatDate";
 
 const StudySessionScreen = () => {
   const router = useRouter();
@@ -122,6 +124,33 @@ const StudySessionScreen = () => {
     router.push(`/study_session/edit/${sessionId}`);
   };
 
+  const handleShare = async () => {
+    const sessionLink = `studybuddy://study_session/${session._id}`;
+    const shareText = `
+Study Session Details
+
+📚 ${session.title}
+📘 ${session.courseCode}
+🗓️ ${formatDate(session.date)}
+🕑 ${session.startTime} – ${session.endTime}
+📍 ${session.location}
+👤 Created by: ${session.createdBy?.displayName} (@${session.createdBy?.userName})
+👥 Participants: ${session.participants.length}
+
+Join this study session in the StudyBuddy app:
+studybuddy://study_session/${session._id}
+
+Or view it on the web:
+https://n11941073.ifn666.com/StudyBuddy/session/${session._id}
+`.trim();
+
+    try {
+      await Share.share({ message: shareText });
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -140,6 +169,7 @@ const StudySessionScreen = () => {
               onDelete={handleDelete}
               onEdit={handleEdit}
               onJoinSuccess={triggerRefresh}
+              onShare={handleShare}
             />
             <CommentList
               sessionId={sessionId}

@@ -17,7 +17,14 @@ import { useRouter } from "expo-router";
 import { useJoinOrLeaveSession } from "@hooks/useJoinOrLeaveSession";
 import { baseUrl } from "@constants/api";
 
-const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
+
+const StudySessionDetails = ({
+  session,
+  onDelete,
+  onEdit,
+  onJoinSuccess,
+  onShare,
+}) => {
   const { colors } = useTheme();
   const { user, token } = useUser();
   const router = useRouter();
@@ -180,7 +187,16 @@ const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
           >
             {isParticipant ? "Leave" : "Join"}
           </Button>
-
+          <Button
+            icon="share-variant"
+            onPress={() => {
+              console.log("Pressed share");
+              onShare();
+            }}
+            textColor={colors.primary}
+          >
+            Share
+          </Button>
           {isOwner && (
             <Menu
               visible={menuVisible}
