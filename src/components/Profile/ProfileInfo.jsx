@@ -42,8 +42,8 @@ const ProfileInfo = ({ userId, token, currentUser }) => {
         text: "Choose from Library",
         onPress: async () => {
           const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
+            aspect: [1, 1],
             quality: 0.7,
           });
 
@@ -56,8 +56,8 @@ const ProfileInfo = ({ userId, token, currentUser }) => {
         text: "Take Photo",
         onPress: async () => {
           const result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
+            aspect: [1, 1],
             quality: 0.7,
           });
 
