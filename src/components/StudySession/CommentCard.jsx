@@ -8,6 +8,7 @@ import {
   Card,
   IconButton,
   Avatar,
+  Menu,
 } from "react-native-paper";
 import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@hooks/useUser";
@@ -29,6 +30,10 @@ const CommentCard = ({
 
   const [editing, setEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
+
+  const [menuVisible, setMenuVisible] = useState(false);
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
 
   const handleSave = () => {
     if (editedContent.trim() && editedContent !== content) {
@@ -66,7 +71,9 @@ const CommentCard = ({
           author ? (
             <Text>
               <TouchableOpacity onPress={navigateToProfile}>
-              <Text variant="titleMedium" >{author.displayName} (@{author.userName})</Text>
+                <Text variant="titleMedium">
+                  {author.displayName} (@{author.userName})
+                </Text>
               </TouchableOpacity>
             </Text>
           ) : (
@@ -88,17 +95,37 @@ const CommentCard = ({
             </TouchableOpacity>
           ) : null
         }
-        right={(props) =>
+        right={() =>
           (isOwner || isModmin) &&
           !editing && (
-            <View style={{ flexDirection: "row" }}>
-              <IconButton
-                {...props}
-                icon="pencil"
-                onPress={() => setEditing(true)}
+            <Menu
+              visible={menuVisible}
+              onDismiss={closeMenu}
+              anchor={
+                <IconButton
+                  icon="dots-vertical"
+                  onPress={openMenu}
+                  iconColor={colors.onSurfaceVariant}
+                />
+              }
+            >
+              <Menu.Item
+                onPress={() => {
+                  closeMenu();
+                  setEditing(true);
+                }}
+                title="Edit"
+                leadingIcon="pencil"
               />
-              <IconButton {...props} icon="delete" onPress={confirmDelete} />
-            </View>
+              <Menu.Item
+                onPress={() => {
+                  closeMenu();
+                  confirmDelete();
+                }}
+                title="Delete"
+                leadingIcon="delete"
+              />
+            </Menu>
           )
         }
       />
