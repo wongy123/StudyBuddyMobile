@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import {
   Card,
   Text,
@@ -11,6 +11,7 @@ import {
 import { useRouter } from "expo-router";
 import { useJoinOrLeaveSession } from "@hooks/useJoinOrLeaveSession";
 import { formatDate } from "@utils/formatDate";
+import { baseUrl } from "@constants/api";
 
 const StudySessionCard = ({
   _id,
@@ -70,19 +71,39 @@ const StudySessionCard = ({
           right={() =>
             createdBy && (
               <TouchableOpacity
-                onPress={() => {
-                  router.push(`/profile/${createdBy._id}`);
-                }}
-              >
-                <Avatar.Text
-                  size={36}
-                  label={createdBy.userName[0].toUpperCase()}
-                  style={{
-                    backgroundColor: colors.secondaryContainer,
-                    marginHorizontal: 16,
-                  }}
-                  labelStyle={{ color: colors.onSecondaryContainer }}
-                />
+      onPress={() => {
+        requestAnimationFrame(() =>
+          router.push(
+            createdBy._id === userId
+              ? "/my_profile"
+              : `/profile/${createdBy._id}`
+          )
+        );
+      }}
+    >
+                {createdBy.profilePic ? (
+                  <Image
+                    source={{
+                      uri: `${baseUrl}/api${createdBy.profilePic}?v=${createdBy.profilePicVersion}`,
+                    }}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 18,
+                      marginHorizontal: 16,
+                    }}
+                  />
+                ) : (
+                  <Avatar.Text
+                    size={36}
+                    label={createdBy.userName[0].toUpperCase()}
+                    style={{
+                      backgroundColor: colors.secondaryContainer,
+                      marginHorizontal: 16,
+                    }}
+                    labelStyle={{ color: colors.onSecondaryContainer }}
+                  />
+                )}
               </TouchableOpacity>
             )
           }
