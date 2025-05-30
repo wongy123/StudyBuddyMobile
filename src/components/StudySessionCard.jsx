@@ -76,7 +76,7 @@ const StudySessionCard = ({
               >
                 <Avatar.Text
                   size={36}
-                  label={createdBy.displayName[0]}
+                  label={createdBy.userName[0].toUpperCase()}
                   style={{
                     backgroundColor: colors.secondaryContainer,
                     marginHorizontal: 16,

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Text, useTheme, ActivityIndicator, Avatar } from 'react-native-paper';
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { Text, useTheme, ActivityIndicator, Avatar } from "react-native-paper";
+import * as ImagePicker from "expo-image-picker";
 import { baseUrl } from "@constants/api";
 
 const ProfileInfo = ({ userId, token, currentUser }) => {
@@ -11,24 +12,99 @@ const ProfileInfo = ({ userId, token, currentUser }) => {
 
   const isOwner = currentUser?.id === userId;
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch(`${baseUrl}/api/users/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const result = await res.json();
-        if (!res.ok) throw new Error(result.message || 'Failed to load user');
-        setUser(result.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchUser = async () => {
+    try {
+      const res = await fetch(`${baseUrl}/api/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || "Failed to load user");
+      setUser(result.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (userId && token) fetchUser();
   }, [userId, token]);
+
+  const pickImageAndUpload = async () => {
+  Alert.alert(
+    "Update Profile Picture",
+    "Choose an option",
+    [
+            
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Choose from Library",
+        onPress: async () => {
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.7,
+          });
+
+          if (!result.canceled) {
+            await uploadImage(result.assets[0]);
+          }
+        },
+      },
+      {
+        text: "Take Photo",
+        onPress: async () => {
+          const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.7,
+          });
+
+          if (!result.canceled) {
+            await uploadImage(result.assets[0]);
+          }
+        },
+      },
+
+    ],
+    { cancelable: true }
+  );
+};
+
+const uploadImage = async (asset) => {
+  const localUri = asset.uri;
+  const filename = localUri.split("/").pop();
+  const match = /\.(\w+)$/.exec(filename || "");
+  const type = match ? `image/${match[1]}` : `image`;
+
+  const formData = new FormData();
+  formData.append("profilePic", {
+    uri: localUri,
+    name: filename,
+    type,
+  });
+
+  try {
+    const res = await fetch(`${baseUrl}/api/users/${userId}/profile-pic`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Upload failed");
+    }
+
+    await fetchUser(); // Refresh
+  } catch (err) {
+    Alert.alert("Upload failed", err.message);
+  }
+};
 
   if (loading) {
     return (
@@ -40,27 +116,37 @@ const ProfileInfo = ({ userId, token, currentUser }) => {
 
   if (error) {
     return (
-      <Text style={{ color: colors.error, textAlign: 'center' }}>{error}</Text>
+      <Text style={{ color: colors.error, textAlign: "center" }}>{error}</Text>
     );
   }
 
   if (!user) return null;
 
+  const AvatarDisplay = user.profilePic ? (
+    <Image
+      source={{
+        uri: `${baseUrl}/api${user.profilePic}?t=${Date.now()}`,
+      }}
+      style={styles.profileImage}
+    />
+  ) : (
+    <Avatar.Text
+      label={user.userName[0].toUpperCase()}
+      size={96}
+      style={{ backgroundColor: colors.secondaryContainer }}
+      labelStyle={{ color: colors.onSecondaryContainer }}
+    />
+  );
+
   return (
-    <View style={styles.container}>
+ <View style={styles.container}>
       <View style={styles.avatarWrapper}>
-        {user.profilePic ? (
-          <Image
-            source={{ uri: `${baseUrl}/api/uploads/profile-pic/${userId}/${user.profilePic}` }}
-            style={styles.profileImage}
-          />
+        {isOwner ? (
+          <TouchableOpacity onPress={pickImageAndUpload}>
+            {AvatarDisplay}
+          </TouchableOpacity>
         ) : (
-          <Avatar.Text
-            label={user.displayName[0]}
-            size={96}
-            style={{ backgroundColor: colors.secondaryContainer }}
-            labelStyle={{ color: colors.onSecondaryContainer }}
-          />
+          AvatarDisplay
         )}
       </View>
 
@@ -75,7 +161,7 @@ const ProfileInfo = ({ userId, token, currentUser }) => {
         <Text variant="labelMedium" style={{ color: colors.onSurfaceVariant }}>
           Degree
         </Text>
-        <Text variant="bodyLarge">{user.degree || 'Not specified'}</Text>
+        <Text variant="bodyLarge">{user.degree || "Not specified"}</Text>
       </View>
 
       <View style={styles.section}>
@@ -85,10 +171,12 @@ const ProfileInfo = ({ userId, token, currentUser }) => {
         <Text
           variant="bodyLarge"
           style={{
-            color: user.profileBio ? colors.onSurface : colors.onSurfaceVariant,
+            color: user.profileBio
+              ? colors.onSurface
+              : colors.onSurfaceVariant,
           }}
         >
-          {user.profileBio || 'This user hasn’t written a bio yet.'}
+          {user.profileBio || "This user hasn’t written a bio yet."}
         </Text>
       </View>
     </View>
@@ -100,11 +188,11 @@ const styles = StyleSheet.create({
     gap: 16,
     marginHorizontal: 16,
     marginTop: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   center: {
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   avatarWrapper: {
     marginBottom: 8,
@@ -113,13 +201,13 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   displayName: {
     marginTop: 4,
   },
   section: {
-    width: '100%',
+    width: "100%",
     gap: 4,
   },
 });

@@ -88,7 +88,7 @@ const CommentCard = ({
             <TouchableOpacity onPress={navigateToProfile}>
               <Avatar.Text
                 {...props}
-                label={author.displayName[0]}
+                label={author.userName[0].toUpperCase()}
                 style={{ backgroundColor: colors.secondaryContainer }}
                 labelStyle={{ color: colors.onSecondaryContainer }}
               />

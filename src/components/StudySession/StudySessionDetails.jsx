@@ -110,7 +110,7 @@ const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
           <View style={styles.creatorInfo}>
             <Avatar.Text
               size={32}
-              label={session.createdBy.displayName[0]}
+              label={session.createdBy.userName[0].toUpperCase()}
               style={{ backgroundColor: colors.secondaryContainer }}
               labelStyle={{ color: colors.onSecondaryContainer }}
             />
@@ -135,7 +135,7 @@ const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
             <View style={styles.participant}>
               <Avatar.Text
                 size={32}
-                label={p.displayName[0]}
+                label={p.userName[0].toUpperCase()}
                 style={{ backgroundColor: colors.secondaryContainer }}
                 labelStyle={{ color: colors.onSecondaryContainer }}
               />
