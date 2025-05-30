@@ -19,8 +19,8 @@ import {
 import { useRouter } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from "@hooks/useUser";
+import { baseUrl } from "@constants/api";
 
-const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const CreateSessionScreen = () => {
   const router = useRouter();

@@ -8,8 +8,8 @@ import {
 } from "react-native-paper";
 import StudySessionCard from "@components/StudySessionCard";
 import { useUser } from "@hooks/useUser";
+import { baseUrl } from "@constants/api";
 
-const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const JoinedSessions = ({ userId, token }) => {
   const { user: currentUser } = useUser();

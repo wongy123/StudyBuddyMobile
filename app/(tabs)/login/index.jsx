@@ -15,8 +15,8 @@ import {
 } from "react-native-paper";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/context/authContext";
+import { baseUrl } from "@constants/api";
 
-const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const LoginScreen = () => {
   const { colors } = useTheme();

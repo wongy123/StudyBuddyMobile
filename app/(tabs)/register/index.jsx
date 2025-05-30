@@ -19,8 +19,8 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../../src/context/authContext";
 import { validate as isEmail } from "email-validator";
+import { baseUrl } from "@constants/api";
 
-const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const RegisterScreen = () => {
   const { colors } = useTheme();

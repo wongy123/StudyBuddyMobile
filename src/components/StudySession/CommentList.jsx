@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Snackbar, useTheme } from "react-native-paper";
 import CommentCard from "./CommentCard";
+import { baseUrl } from "@constants/api";
 
-const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const CommentList = ({ sessionId, token, refreshKey }) => {
   const { colors } = useTheme();

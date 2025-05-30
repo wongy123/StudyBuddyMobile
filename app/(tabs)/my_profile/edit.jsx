@@ -3,8 +3,8 @@ import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Text, ActivityIndicator, useTheme, Button, TextInput } from 'react-native-paper';
 import { useUser } from '@hooks/useUser';
 import { useRouter } from 'expo-router';
+import { baseUrl } from "@constants/api";
 
-const baseUrl = 'https://n11941073.ifn666.com/StudyBuddy';
 
 const EditProfileScreen = () => {
   const { user, token } = useUser();

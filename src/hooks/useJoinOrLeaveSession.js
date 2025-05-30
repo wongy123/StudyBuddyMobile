@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@context/authContext';
+import { baseUrl } from "@constants/api";
 
-const baseUrl = 'https://n11941073.ifn666.com/StudyBuddy';
 
 export const useJoinOrLeaveSession = ({ sessionId, isParticipant, onSuccess, onError }) => {
   const { token } = useAuth();

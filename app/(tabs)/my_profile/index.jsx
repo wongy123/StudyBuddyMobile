@@ -6,8 +6,8 @@ import { useAuth } from "@context/authContext";
 import { useRouter, useFocusEffect } from "expo-router";
 import ProfileInfo from "@components/Profile/ProfileInfo";
 import JoinedSessions from "@components/Profile/JoinedSessions";
+import { baseUrl } from "@constants/api";
 
-const baseUrl = "https://n11941073.ifn666.com/StudyBuddy";
 
 const MyProfileScreen = () => {
   const { token, user } = useUser();

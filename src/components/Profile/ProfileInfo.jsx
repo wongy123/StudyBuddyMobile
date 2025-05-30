@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, useTheme, ActivityIndicator } from 'react-native-paper';
+import { baseUrl } from "@constants/api";
 
-const baseUrl = 'https://n11941073.ifn666.com/StudyBuddy';
 
 const ProfileInfo = ({ userId, token }) => {
   const { colors } = useTheme();
