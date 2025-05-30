@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@context/authContext';
 import { baseUrl } from "@constants/api";
+import { scheduleSessionReminder } from '@utils/notification';
 
 
 export const useJoinOrLeaveSession = ({ sessionId, isParticipant, onSuccess, onError }) => {
@@ -28,6 +29,9 @@ export const useJoinOrLeaveSession = ({ sessionId, isParticipant, onSuccess, onE
       const result = await res.json();
 
       if (res.ok) {
+        if (action === 'join' && result.session) {
+          await scheduleSessionReminder(result.session); // Schedule 24h before
+        }
         onSuccess?.();
       } else {
         onError?.(result.message || `Failed to ${action} the session.`);
