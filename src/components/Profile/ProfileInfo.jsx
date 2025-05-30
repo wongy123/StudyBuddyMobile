@@ -125,7 +125,7 @@ const uploadImage = async (asset) => {
   const AvatarDisplay = user.profilePic ? (
     <Image
       source={{
-        uri: `${baseUrl}/api${user.profilePic}?t=${Date.now()}`,
+        uri: `${baseUrl}/api${user.profilePic}?v=${user.profilePicVersion}`,
       }}
       style={styles.profileImage}
     />

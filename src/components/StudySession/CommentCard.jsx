@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Alert, TouchableOpacity, Image } from "react-native";
 import {
   Text,
   TextInput,
@@ -13,6 +13,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { useUser } from "@hooks/useUser";
 import { useRouter } from "expo-router";
+import { baseUrl } from "@constants/api";
 
 const CommentCard = ({
   user: author,
@@ -86,12 +87,19 @@ const CommentCard = ({
         left={(props) =>
           author ? (
             <TouchableOpacity onPress={navigateToProfile}>
-              <Avatar.Text
-                {...props}
-                label={author.userName[0].toUpperCase()}
-                style={{ backgroundColor: colors.secondaryContainer }}
-                labelStyle={{ color: colors.onSecondaryContainer }}
-              />
+              {author.profilePic ? (
+        <Image
+          source={{ uri: `${baseUrl}/api${author.profilePic}?v=${author.profilePicVersion}` }}
+          style={{ width: 40, height: 40, borderRadius: 20 }}
+        />
+      ) : (
+        <Avatar.Text
+          {...props}
+          label={author.userName[0].toUpperCase()}
+          style={{ backgroundColor: colors.secondaryContainer }}
+          labelStyle={{ color: colors.onSecondaryContainer }}
+        />
+      )}
             </TouchableOpacity>
           ) : null
         }
