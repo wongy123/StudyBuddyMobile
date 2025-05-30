@@ -63,52 +63,65 @@ const StudySessionCard = ({
         onPress={() => token && router.push(`/study_session/${_id}`)}
         disabled={!token}
       >
-        <Card.Title
-          title={title}
-          subtitle={`📘 ${courseCode}`}
-          titleStyle={{ color: colors.onSurface }}
-          subtitleStyle={{ color: colors.onSurfaceVariant }}
-          right={() =>
-            createdBy && (
-              <TouchableOpacity
-      onPress={() => {
-        requestAnimationFrame(() =>
-          router.push(
-            createdBy._id === userId
-              ? "/my_profile"
-              : `/profile/${createdBy._id}`
-          )
-        );
-      }}
-    >
-                {createdBy.profilePic ? (
-                  <Image
-                    source={{
-                      uri: `${baseUrl}/api${createdBy.profilePic}?v=${createdBy.profilePicVersion}`,
-                    }}
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 18,
-                      marginHorizontal: 16,
-                    }}
-                  />
-                ) : (
-                  <Avatar.Text
-                    size={36}
-                    label={createdBy.userName[0].toUpperCase()}
-                    style={{
-                      backgroundColor: colors.secondaryContainer,
-                      marginHorizontal: 16,
-                    }}
-                    labelStyle={{ color: colors.onSecondaryContainer }}
-                  />
-                )}
-              </TouchableOpacity>
-            )
-          }
-        />
         <Card.Content>
+          <TouchableOpacity
+            onPress={() => {
+              requestAnimationFrame(() =>
+                router.push(
+                  createdBy._id === userId
+                    ? "/my_profile"
+                    : `/profile/${createdBy._id}`
+                )
+              );
+            }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 16,
+            }}
+          >
+            {createdBy.profilePic ? (
+              <Image
+                source={{
+                  uri: `${baseUrl}/api${createdBy.profilePic}?v=${createdBy.profilePicVersion}`,
+                }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  marginRight: 8,
+                }}
+              />
+            ) : (
+              <Avatar.Text
+                size={40}
+                label={createdBy.userName[0].toUpperCase()}
+                style={{
+                  backgroundColor: colors.secondaryContainer,
+                  marginRight: 8,
+                }}
+                labelStyle={{ color: colors.onSecondaryContainer }}
+              />
+            )}
+            <View>
+              <Text style={{ fontWeight: "bold", color: colors.onSurface }}>
+                {createdBy.displayName}
+              </Text>
+              <Text style={{ color: colors.onSurfaceVariant }}>
+                @{createdBy.userName}
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <Text variant="titleMedium" style={{ color: colors.onSurface }}>
+            {title}
+          </Text>
+          <Text
+            variant="bodySmall"
+            style={{ color: colors.onSurfaceVariant, marginBottom: 8 }}
+          >
+            📘 {courseCode}
+          </Text>
           <Text
             variant="bodyMedium"
             style={{ color: colors.onSurface, marginBottom: 8 }}
@@ -177,6 +190,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 8,
     paddingBottom: 8,
+    paddingTop: 16,
   },
   detailColumn: {
     gap: 4,

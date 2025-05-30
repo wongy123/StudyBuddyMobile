@@ -53,7 +53,7 @@ const MyProfileScreen = () => {
       style={{ backgroundColor: colors.background }}
     >
       {loading ? (
-        <View style={styles.center}>
+        <View style={[styles.center, { backgroundColor: colors.background }]}>
           <ActivityIndicator animating size="large" color={colors.primary} />
         </View>
       ) : error ? (
@@ -92,13 +92,13 @@ const MyProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     gap: 16,
-    paddingHorizontal: 16,
-    paddingTop: 16,
   },
   header: {
     flexDirection: "row",
     gap: 8,
     justifyContent: "flex-end",
+    marginTop: 16,
+    marginHorizontal: 16,
   },
   center: {
     flex: 1,
