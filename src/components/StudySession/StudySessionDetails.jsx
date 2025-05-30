@@ -187,6 +187,7 @@ const StudySessionDetails = ({
           >
             {isParticipant ? "Leave" : "Join"}
           </Button>
+          <View style={styles.rightButtons}>
           <Button
             icon="share-variant"
             onPress={() => {
@@ -227,6 +228,7 @@ const StudySessionDetails = ({
               />
             </Menu>
           )}
+          </View>
         </View>
       )}
     </View>
@@ -267,6 +269,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  rightButtons: {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 4,
+},
 });
 
 export default StudySessionDetails;
