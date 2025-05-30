@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
 import {
   Text,
   Avatar,
@@ -15,6 +15,7 @@ import { formatDate } from "@utils/formatDate";
 import { useUser } from "@hooks/useUser";
 import { useRouter } from "expo-router";
 import { useJoinOrLeaveSession } from "@hooks/useJoinOrLeaveSession";
+import { baseUrl } from "@constants/api";
 
 const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
   const { colors } = useTheme();
@@ -108,12 +109,21 @@ const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
           onPress={() => navigateToProfile(session.createdBy._id)}
         >
           <View style={styles.creatorInfo}>
-            <Avatar.Text
-              size={32}
-              label={session.createdBy.userName[0].toUpperCase()}
-              style={{ backgroundColor: colors.secondaryContainer }}
-              labelStyle={{ color: colors.onSecondaryContainer }}
-            />
+            {session.createdBy.profilePic ? (
+              <Image
+                source={{
+                  uri: `${baseUrl}/api${session.createdBy.profilePic}?v=${session.createdBy.profilePicVersion}`,
+                }}
+                style={{ width: 32, height: 32, borderRadius: 16 }}
+              />
+            ) : (
+              <Avatar.Text
+                size={32}
+                label={session.createdBy.userName[0].toUpperCase()}
+                style={{ backgroundColor: colors.secondaryContainer }}
+                labelStyle={{ color: colors.onSecondaryContainer }}
+              />
+            )}
             <Text style={{ color: colors.onSurface, marginLeft: 8 }}>
               {session.createdBy.displayName} (@{session.createdBy.userName})
             </Text>
@@ -133,12 +143,21 @@ const StudySessionDetails = ({ session, onDelete, onEdit, onJoinSuccess }) => {
             onPress={() => navigateToProfile(p._id)}
           >
             <View style={styles.participant}>
-              <Avatar.Text
-                size={32}
-                label={p.userName[0].toUpperCase()}
-                style={{ backgroundColor: colors.secondaryContainer }}
-                labelStyle={{ color: colors.onSecondaryContainer }}
-              />
+              {p.profilePic ? (
+                <Image
+                  source={{
+                    uri: `${baseUrl}/api${p.profilePic}?v=${p.profilePicVersion}`,
+                  }}
+                  style={{ width: 32, height: 32, borderRadius: 16 }}
+                />
+              ) : (
+                <Avatar.Text
+                  size={32}
+                  label={p.userName[0].toUpperCase()}
+                  style={{ backgroundColor: colors.secondaryContainer }}
+                  labelStyle={{ color: colors.onSecondaryContainer }}
+                />
+              )}
               <Text style={{ color: colors.onSurface, marginLeft: 8 }}>
                 {p.displayName} (@{p.userName})
               </Text>
