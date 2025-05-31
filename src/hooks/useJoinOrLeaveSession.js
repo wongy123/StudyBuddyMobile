@@ -29,8 +29,8 @@ export const useJoinOrLeaveSession = ({ sessionId, isParticipant, onSuccess, onE
       const result = await res.json();
 
       if (res.ok) {
-        if (action === 'join' && result.session) {
-          await scheduleSessionReminder(result.session); // Schedule 24h before
+        if (action === 'join' && result.data) {
+            scheduleSessionReminder(result.data); // Schedule 24h before
         }
         onSuccess?.();
       } else {
