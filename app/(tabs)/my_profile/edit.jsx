@@ -123,7 +123,7 @@ const EditProfileScreen = () => {
         onChangeText={handleChange("profileBio")}
         multiline
         numberOfLines={4}
-        style={styles.input}
+        style={[styles.input, { minHeight: 100 }]}
       />
       <Button
         mode="contained"

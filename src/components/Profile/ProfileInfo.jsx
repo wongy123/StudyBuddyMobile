@@ -34,7 +34,7 @@ const ProfileInfo = ({ userId, token, currentUser }) => {
   const pickImageAndUpload = async () => {
   Alert.alert(
     "Update Profile Picture",
-    "Choose an option",
+    "Upload an image from your library or take a new photo.",
     [
             
       { text: "Cancel", style: "cancel" },
