@@ -33,14 +33,14 @@
 ## Core: API integration (3 marks)
 
 - **One line description:** Fully integrated with REST API for StudyBuddy, available at https://n11941073.ifn666.com/StudyBuddy/api/
-- **Video timestamp:** 04:20
+- **Video timestamp:** 04:00
 - **Relevant files**
    - src/constants/api.js
 
 ## Additional: Device notifications (3 marks)
 
 - **One line description:** Notifications scheduled for 24 hours before a joined event is due to start.
-- **Video timestamp:** 02:22
+- **Video timestamp:** 02:09
 - **Relevant files**
    - src/utils/notification.js
    - app/_layout.jsx
@@ -48,7 +48,7 @@
 ## Additional: Linking (3 marks)
 
 - **One line description:** On Android,navigating to web url will redirect to app instead.
-- **Video timestamp:** 01:39
+- **Video timestamp:** 01:30
 - **Relevant files**
    - app/_linking.jsx
    - app.json
@@ -56,13 +56,13 @@
 ## Additional: Camera (3 marks)
 
 - **One line description:** Modified REST API to accept image uploads, allowing users to upload profile pictures.
-- **Video timestamp:** 02:39
+- **Video timestamp:** 02:24
 - **Relevant files**
    - app/(tabs)/my_profile/index.jsx
 
 ## Additional: Share (3 marks)
 
 - **One line description:** When share button is pressed, study session details can be shared with a link to the session page.
-- **Video timestamp:** 01:23
+- **Video timestamp:** 01:15
 - **Relevant files**
    - app/(tabs)/(home)/study_session/[id].jsx
