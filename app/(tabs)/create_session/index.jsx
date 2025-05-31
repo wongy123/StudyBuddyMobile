@@ -8,7 +8,6 @@ import {
   Keyboard,
   Pressable,
   View,
-  Alert,
 } from "react-native";
 import {
   TextInput,
@@ -56,13 +55,6 @@ const CreateSessionScreen = () => {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!token) {
-      router.back();
-      Alert.alert("Not authenticated", "Please log in to continue.");
-      router.navigate("/login");
-    }
-  }, [token]);
 
   const showPicker = (mode, field) => {
     setPicker({ show: true, mode, field });

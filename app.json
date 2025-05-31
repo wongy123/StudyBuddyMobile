@@ -22,7 +22,18 @@
         "backgroundColor": "#1a1b1e"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anguswong.StudyBuddy"
+      "package": "com.anguswong.StudyBuddy",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "n11941073.ifn666.com",
+            "pathPrefix": "/StudyBuddy"
+          },
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

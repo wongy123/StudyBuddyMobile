@@ -26,7 +26,14 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="studybuddy"/>
-        <data android:scheme="exp+studybuddymobile"/>
+        <data android:scheme="exp+studybuddy"/>
+      </intent-filter>
+      <intent-filter data-generated="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <data android:scheme="https" android:host="n11941073.ifn666.com" android:pathPrefix="/StudyBuddy"/>
+        <data android:scheme="exp+studybuddy"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
   </application>

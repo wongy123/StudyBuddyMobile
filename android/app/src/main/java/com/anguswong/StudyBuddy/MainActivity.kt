@@ -1,4 +1,4 @@
-package com.anonymous.StudyBuddyMobile
+package com.anguswong.StudyBuddy
 
 import android.os.Build
 import android.os.Bundle

@@ -119,7 +119,6 @@ const StudySessionScreen = () => {
   };
 
   const handleShare = async () => {
-    const sessionLink = `studybuddy://study_session/${session._id}`;
     const shareText = `
 Study Session Details
 
@@ -133,10 +132,7 @@ Study Session Details
     })
 👥 Participants: ${session.participants.length}
 
-Join this study session in the StudyBuddy app:
-${sessionLink}
-
-Or view it on the web:
+Join this study session in the StudyBuddy app or view it on the web:
 https://n11941073.ifn666.com/StudyBuddy/session/${session._id}
 `.trim();
 

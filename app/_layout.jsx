@@ -9,6 +9,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { useEffect } from 'react';
 import { RefreshProvider } from "@context/refreshContext";
+import LinkInterceptor from "./_linking";
 
 
 Notifications.setNotificationHandler({
@@ -63,6 +64,7 @@ useEffect(() => {
     <AuthProvider>
       <RefreshProvider>
       <PaperProvider theme={theme}>
+        <LinkInterceptor />
         <Slot />
       </PaperProvider>
       </RefreshProvider>
