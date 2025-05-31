@@ -65,6 +65,7 @@ const StudySessionCard = ({
       >
         <Card.Content>
           <TouchableOpacity
+            disabled={!token}
             onPress={() => {
               requestAnimationFrame(() =>
                 router.push(

@@ -1,5 +1,6 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { useEffect } from "react";
+import { ScrollView, StyleSheet, View, Alert } from "react-native";
 import { Text, useTheme, ActivityIndicator } from "react-native-paper";
 import { useUser } from "@hooks/useUser";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -11,6 +12,14 @@ const PublicProfileScreen = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { colors } = useTheme();
+
+  useEffect(() => {
+    if (!token) {
+      router.back();
+      Alert.alert("Not authenticated", "Please log in to continue.");
+      router.navigate("/login");
+    }
+  }, [token]);
 
   // If viewing own profile, redirect
   if (user && id === user.id) {

@@ -1,5 +1,5 @@
 import { AuthProvider } from "@context/authContext";
-import { Slot } from "expo-router";
+import { Slot, useRouter } from "expo-router";
 import {
   PaperProvider,
   MD3DarkTheme as DefaultTheme,
@@ -8,7 +8,6 @@ import { darkTheme } from "@constants/theme";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { useEffect } from 'react';
-import { useRouter } from 'expo-router';
 import { RefreshProvider } from "@context/refreshContext";
 
 

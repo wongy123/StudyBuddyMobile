@@ -23,7 +23,7 @@ import CommentForm from "@components/StudySession/CommentForm";
 import { useUser } from "@hooks/useUser";
 import { baseUrl } from "@constants/api";
 import { formatDate } from "@utils/formatDate";
-import { useRefresh} from "@context/refreshContext";
+import { useRefresh } from "@context/refreshContext";
 
 const StudySessionScreen = () => {
   const router = useRouter();
@@ -36,7 +36,16 @@ const StudySessionScreen = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  
+
+  useEffect(() => {
+    if (!token) {
+      router.back();
+      Alert.alert("Not authenticated", "Please log in to continue.");
+      router.navigate("/login");
+    }
+  }, [token]);
+
+  if (!token) return null;
 
   const fetchSession = async () => {
     try {
@@ -119,7 +128,9 @@ Study Session Details
 🗓️ ${formatDate(session.date)}
 🕑 ${session.startTime} – ${session.endTime}
 📍 ${session.location}
-👤 Created by: ${session.createdBy?.displayName} (@${session.createdBy?.userName})
+👤 Created by: ${session.createdBy?.displayName} (@${
+      session.createdBy?.userName
+    })
 👥 Participants: ${session.participants.length}
 
 Join this study session in the StudyBuddy app:
@@ -140,73 +151,78 @@ https://n11941073.ifn666.com/StudyBuddy/session/${session._id}
     fetchSession();
   }, [refreshKey]);
 
-return (
-  <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 104}
-  >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.wrapper}>
-        {loading ? (
-          <View style={styles.center}>
-            <ActivityIndicator animating size="large" color={colors.primary} />
-          </View>
-        ) : error ? (
-          <View style={styles.center}>
-            <Text style={{ color: colors.error }}>{error}</Text>
-          </View>
-        ) : (
-          <ScrollView
-            style={{ flex: 1, backgroundColor: colors.background }}
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-          >
-            <StudySessionDetails
-              session={session}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-              onJoinSuccess={() => triggerRefresh()}
-              onShare={handleShare}
-            />
-            <CommentList
-              sessionId={sessionId}
-              token={token}
-              refreshKey={refreshKey}
-            />
-          </ScrollView>
-        )}
-        {!loading && !error && (
-          <View
-            style={[
-              styles.fixedBottom,
-              { backgroundColor: colors.elevation.level1 },
-            ]}
-          >
-            <CommentForm onSubmit={handleCommentSubmit} />
-          </View>
-        )}
-      </View>
-    </TouchableWithoutFeedback>
-
-    <Snackbar
-      visible={snackbarVisible}
-      onDismiss={() => setSnackbarVisible(false)}
-      duration={2000}
-      action={{
-        label: "Close",
-        onPress: () => setSnackbarVisible(false),
-        textColor: colors.onSecondaryContainer,
-      }}
-      style={{ backgroundColor: colors.secondaryContainer }}
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 104}
     >
-      <Text style={{ color: colors.onSecondaryContainer }}>
-        Session deleted successfully
-      </Text>
-    </Snackbar>
-  </KeyboardAvoidingView>
-);
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={styles.wrapper}>
+          {loading ? (
+            <View style={styles.center}>
+              <ActivityIndicator
+                animating
+                size="large"
+                color={colors.primary}
+              />
+            </View>
+          ) : error ? (
+            <View
+              style={[styles.center, { backgroundColor: colors.background }]}
+            >
+              <Text style={{ color: colors.error }}>{error}</Text>
+            </View>
+          ) : (
+            <ScrollView
+              style={{ flex: 1, backgroundColor: colors.background }}
+              contentContainerStyle={styles.scrollContent}
+              keyboardShouldPersistTaps="handled"
+            >
+              <StudySessionDetails
+                session={session}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+                onJoinSuccess={() => triggerRefresh()}
+                onShare={handleShare}
+              />
+              <CommentList
+                sessionId={sessionId}
+                token={token}
+                refreshKey={refreshKey}
+              />
+            </ScrollView>
+          )}
+          {!loading && !error && (
+            <View
+              style={[
+                styles.fixedBottom,
+                { backgroundColor: colors.elevation.level1 },
+              ]}
+            >
+              <CommentForm onSubmit={handleCommentSubmit} />
+            </View>
+          )}
+        </View>
+      </TouchableWithoutFeedback>
 
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={2000}
+        action={{
+          label: "Close",
+          onPress: () => setSnackbarVisible(false),
+          textColor: colors.onSecondaryContainer,
+        }}
+        style={{ backgroundColor: colors.secondaryContainer }}
+      >
+        <Text style={{ color: colors.onSecondaryContainer }}>
+          Session deleted successfully
+        </Text>
+      </Snackbar>
+    </KeyboardAvoidingView>
+  );
 };
 
 const styles = StyleSheet.create({
