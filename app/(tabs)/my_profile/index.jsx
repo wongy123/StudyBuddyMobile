@@ -73,7 +73,7 @@ const MyProfileScreen = () => {
               mode="contained"
               onPress={() => {
                 logout();
-                router.replace("/(tabs)/(home)");
+                router.navigate("/(tabs)/(home)");
               }}
               buttonColor={colors.error}
             >

@@ -130,7 +130,7 @@ const EditSessionScreen = () => {
         error: false,
       });
       router.back();
-      router.replace(`/study_session/${sessionId}`);
+      router.navigate(`/study_session/${sessionId}`);
     } catch (err) {
       setSnack({ open: true, message: err.message, error: true });
     } finally {

@@ -111,10 +111,9 @@ const StudySessionScreen = () => {
       setSnackbarVisible(true);
 
       // Slight delay before navigating back
-      setTimeout(() => router.back(), 1500);
       setTimeout(() => {
-        router.replace("/(tabs)/(home)");
-      }, 1550);
+        router.navigate("/(tabs)/(home)");
+      }, 1500);
     } catch (err) {
       Alert.alert("Delete failed", err.message);
     }
@@ -138,7 +137,7 @@ Study Session Details
 👥 Participants: ${session.participants.length}
 
 Join this study session in the StudyBuddy app:
-studybuddy://study_session/${session._id}
+${sessionLink}
 
 Or view it on the web:
 https://n11941073.ifn666.com/StudyBuddy/session/${session._id}
