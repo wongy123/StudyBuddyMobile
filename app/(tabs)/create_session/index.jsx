@@ -20,6 +20,7 @@ import { useRouter } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from "@hooks/useUser";
 import { baseUrl } from "@constants/api";
+import { scheduleSessionReminder } from '@utils/notification';
 
 
 const CreateSessionScreen = () => {
@@ -125,7 +126,7 @@ const CreateSessionScreen = () => {
         message: "Session created successfully!",
         error: false,
       });
-
+      await scheduleSessionReminder(result);
       setForm({
         title: "",
         description: "",

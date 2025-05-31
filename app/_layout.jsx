@@ -8,6 +8,7 @@ import { darkTheme } from "@constants/theme";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { useEffect } from 'react';
+import { useRouter } from 'expo-router';
 
 
 Notifications.setNotificationHandler({
@@ -20,6 +21,7 @@ Notifications.setNotificationHandler({
 
 
 const RootLayout = () => {
+  const router = useRouter();
   const theme = {
     ...DefaultTheme,
     colors: { ...darkTheme.colors },
@@ -45,6 +47,17 @@ useEffect(() => {
     registerForPushNotifications();
   }, []);
 
+  
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const sessionId = response.notification.request.content.data.sessionId;
+      if (sessionId) {
+        router.push(`/study_session/${sessionId}`);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   return (
     <AuthProvider>

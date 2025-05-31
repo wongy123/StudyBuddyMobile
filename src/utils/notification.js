@@ -17,7 +17,10 @@ export const scheduleSessionReminder = async (session) => {
       return;
     }
 
-    const trigger = fireDate;
+    const trigger = {
+      type: 'date',
+      date: fireDate,
+    };
 
     const id = await Notifications.scheduleNotificationAsync({
       content: {
