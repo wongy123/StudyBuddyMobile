@@ -20,6 +20,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from "@hooks/useUser";
 import { baseUrl } from "@constants/api";
+import { useRefresh } from "@context/refreshContext";
 
 
 
@@ -30,6 +31,7 @@ const EditSessionScreen = () => {
   const { colors } = useTheme();
   const scrollRef = useRef(null);
   const locationRef = useRef(null);
+  const { triggerRefresh } = useRefresh();
 
   const [form, setForm] = useState({
     title: "",
@@ -130,6 +132,7 @@ const EditSessionScreen = () => {
         error: false,
       });
       router.back();
+      triggerRefresh(); // Refresh session data
       router.navigate(`/study_session/${sessionId}`);
     } catch (err) {
       setSnack({ open: true, message: err.message, error: true });

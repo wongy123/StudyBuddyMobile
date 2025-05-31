@@ -4,13 +4,11 @@ import { Text, Snackbar, useTheme } from "react-native-paper";
 import CommentCard from "./CommentCard";
 import { baseUrl } from "@constants/api";
 
-
 const CommentList = ({ sessionId, token, refreshKey }) => {
   const { colors } = useTheme();
 
   const [comments, setComments] = useState([]);
   const [error, setError] = useState(null);
-
   const [snack, setSnack] = useState({
     open: false,
     message: "",
@@ -21,28 +19,9 @@ const CommentList = ({ sessionId, token, refreshKey }) => {
     setSnack({ open: true, message, severity });
   };
 
-  const hideSnack = () => setSnack((prev) => ({ ...prev, open: false }));
-
-  const fetchComments = async () => {
-    try {
-      const res = await fetch(`${baseUrl}/api/sessions/${sessionId}/comments`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const result = await res.json();
-      if (res.ok) {
-        setComments(result.data.comments);
-        setError(null);
-      } else {
-        setError(result.message || "Failed to load comments.");
-      }
-    } catch {
-      setError("Network error loading comments.");
-    }
+  const hideSnack = () => {
+    setSnack((prev) => ({ ...prev, open: false }));
   };
-
-  useEffect(() => {
-    if (token && sessionId) fetchComments();
-  }, [refreshKey]);
 
   const handleDelete = async (commentId) => {
     try {
@@ -93,16 +72,53 @@ const CommentList = ({ sessionId, token, refreshKey }) => {
     }
   };
 
+  const fetchComments = async () => {
+    if (!sessionId) return;
+    try {
+      const res = await fetch(`${baseUrl}/api/sessions/${sessionId}/comments`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await res.json();
+
+      if (res.ok) {
+        setComments(result.data.comments);
+        setError(null);
+      } else {
+        setError(result.message || "Failed to load comments.");
+      }
+    } catch {
+      setError("Network error loading comments.");
+    }
+  };
+
+  useEffect(() => {
+    if (token && sessionId) {
+      fetchComments();
+    }
+  }, [token, sessionId]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [refreshKey]);
+
   return (
     <View style={styles.container}>
       <Text
         variant="titleMedium"
-        style={{ marginBottom: 8, color: colors.onSurface, marginHorizontal: 16  }}
+        style={{
+          marginBottom: 8,
+          color: colors.onSurface,
+          marginHorizontal: 16,
+        }}
       >
         💬 Comments
       </Text>
 
-      {error && <Text style={{ color: colors.error }}>{error}</Text>}
+      {error && (
+        <Text style={{ color: colors.error, marginHorizontal: 16 }}>
+          {error}
+        </Text>
+      )}
 
       {comments.length === 0 && !error ? (
         <Text style={{ color: colors.onSurfaceVariant, marginHorizontal: 16 }}>
@@ -114,9 +130,7 @@ const CommentList = ({ sessionId, token, refreshKey }) => {
             key={comment._id}
             {...comment}
             onDelete={() => handleDelete(comment._id)}
-            onUpdate={(updatedContent) =>
-              handleUpdate(comment._id, updatedContent)
-            }
+            onUpdate={(content) => handleUpdate(comment._id, content)}
           />
         ))
       )}
@@ -155,7 +169,7 @@ const styles = StyleSheet.create({
   container: {
     gap: 8,
     paddingBottom: 16,
-    marginBottom: 16
+    marginBottom: 16,
   },
 });
 

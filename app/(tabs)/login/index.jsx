@@ -13,16 +13,16 @@ import {
   Snackbar,
   Text,
 } from "react-native-paper";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/context/authContext";
 import { baseUrl } from "@constants/api";
+import { useRefresh } from "@context/refreshContext";
 
 
 const LoginScreen = () => {
   const { colors } = useTheme();
   const router = useRouter();
-  const params = useLocalSearchParams();
-  const backgroundLocation = params?.redirect || "/";
+  const { triggerRefresh } = useRefresh();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,7 +45,8 @@ const LoginScreen = () => {
         await login(data.token);
         setEmail("");
         setPassword("");
-        router.replace(backgroundLocation);
+        triggerRefresh();
+        router.navigate(`/`);
       } else {
         setErrorMessage(data.message || "Login failed");
         setErrorVisible(true);

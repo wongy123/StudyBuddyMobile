@@ -20,6 +20,7 @@ import {
 import StudySessionCard from "@components/StudySessionCard";
 import { useUser } from "@hooks/useUser";
 import { baseUrl } from "@constants/api";
+import { useRefresh } from "@context/refreshContext";
 
 const PAGE_SIZE = 5;
 
@@ -27,6 +28,7 @@ function HomeScreen() {
   const { colors } = useTheme();
   const { token, user } = useUser();
   const listRef = useRef(null);
+  const { refreshKey } = useRefresh();
 
   const [sessions, setSessions] = useState([]);
   const [error, setError] = useState(null);
@@ -84,6 +86,11 @@ function HomeScreen() {
     fetchSessions(1);
   }, [search, sort]);
 
+  useEffect(() => {
+    fetchSessions(1);
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, [refreshKey]);
+
   const onRefresh = () => {
     setRefreshing(true);
     fetchSessions(page);
@@ -102,7 +109,10 @@ function HomeScreen() {
           icon="alert-circle"
           style={{ backgroundColor: colors.secondaryContainer, marginTop: -8 }}
         >
-          <Text variant="bodyLarge" style={{ color: colors.onSecondaryContainer }}>
+          <Text
+            variant="bodyLarge"
+            style={{ color: colors.onSecondaryContainer }}
+          >
             Please login to join sessions.
           </Text>
         </Banner>

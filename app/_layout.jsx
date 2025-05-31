@@ -9,6 +9,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import { RefreshProvider } from "@context/refreshContext";
 
 
 Notifications.setNotificationHandler({
@@ -47,7 +48,7 @@ useEffect(() => {
     registerForPushNotifications();
   }, []);
 
-  
+
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       const sessionId = response.notification.request.content.data.sessionId;
@@ -61,9 +62,11 @@ useEffect(() => {
 
   return (
     <AuthProvider>
+      <RefreshProvider>
       <PaperProvider theme={theme}>
         <Slot />
       </PaperProvider>
+      </RefreshProvider>
     </AuthProvider>
   );
 };

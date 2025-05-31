@@ -23,19 +23,20 @@ import CommentForm from "@components/StudySession/CommentForm";
 import { useUser } from "@hooks/useUser";
 import { baseUrl } from "@constants/api";
 import { formatDate } from "@utils/formatDate";
+import { useRefresh} from "@context/refreshContext";
 
 const StudySessionScreen = () => {
   const router = useRouter();
   const { id: sessionId } = useLocalSearchParams();
   const { colors } = useTheme();
   const { token } = useUser();
+  const { refreshKey, triggerRefresh } = useRefresh();
 
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [refreshFlag, setRefreshFlag] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const triggerRefresh = () => setRefreshFlag((prev) => !prev);
+  
 
   const fetchSession = async () => {
     try {
@@ -57,7 +58,7 @@ const StudySessionScreen = () => {
 
   useEffect(() => {
     if (sessionId && token) fetchSession();
-  }, [sessionId, token, refreshFlag]);
+  }, [sessionId, token]);
 
   const handleCommentSubmit = async (content) => {
     const res = await fetch(`${baseUrl}/api/sessions/${sessionId}/comments`, {
@@ -74,24 +75,8 @@ const StudySessionScreen = () => {
       throw new Error(result.message || "Failed to post comment");
     }
 
-    setRefreshFlag((prev) => !prev); // Trigger refresh
+    triggerRefresh();
   };
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator animating size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.center}>
-        <Text style={{ color: colors.error }}>{error}</Text>
-      </View>
-    );
-  }
 
   const handleDelete = async () => {
     try {
@@ -112,7 +97,8 @@ const StudySessionScreen = () => {
 
       // Slight delay before navigating back
       setTimeout(() => {
-        router.navigate("/(tabs)/(home)");
+        triggerRefresh();
+        router.navigate("/");
       }, 1500);
     } catch (err) {
       Alert.alert("Delete failed", err.message);
@@ -150,14 +136,27 @@ https://n11941073.ifn666.com/StudyBuddy/session/${session._id}
     }
   };
 
-  return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 104}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={styles.wrapper}>
+  useEffect(() => {
+    fetchSession();
+  }, [refreshKey]);
+
+return (
+  <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 104}
+  >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.wrapper}>
+        {loading ? (
+          <View style={styles.center}>
+            <ActivityIndicator animating size="large" color={colors.primary} />
+          </View>
+        ) : error ? (
+          <View style={styles.center}>
+            <Text style={{ color: colors.error }}>{error}</Text>
+          </View>
+        ) : (
           <ScrollView
             style={{ flex: 1, backgroundColor: colors.background }}
             contentContainerStyle={styles.scrollContent}
@@ -167,16 +166,17 @@ https://n11941073.ifn666.com/StudyBuddy/session/${session._id}
               session={session}
               onDelete={handleDelete}
               onEdit={handleEdit}
-              onJoinSuccess={triggerRefresh}
+              onJoinSuccess={() => triggerRefresh()}
               onShare={handleShare}
             />
             <CommentList
               sessionId={sessionId}
               token={token}
-              refreshKey={refreshFlag}
+              refreshKey={refreshKey}
             />
           </ScrollView>
-
+        )}
+        {!loading && !error && (
           <View
             style={[
               styles.fixedBottom,
@@ -185,26 +185,28 @@ https://n11941073.ifn666.com/StudyBuddy/session/${session._id}
           >
             <CommentForm onSubmit={handleCommentSubmit} />
           </View>
-        </View>
-      </TouchableWithoutFeedback>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
 
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={2000}
-        action={{
-          label: "Close",
-          onPress: () => setSnackbarVisible(false),
-          textColor: colors.onSecondaryContainer,
-        }}
-        style={{ backgroundColor: colors.secondaryContainer }}
-      >
-        <Text style={{ color: colors.onSecondaryContainer }}>
-          Session deleted successfully
-        </Text>
-      </Snackbar>
-    </KeyboardAvoidingView>
-  );
+    <Snackbar
+      visible={snackbarVisible}
+      onDismiss={() => setSnackbarVisible(false)}
+      duration={2000}
+      action={{
+        label: "Close",
+        onPress: () => setSnackbarVisible(false),
+        textColor: colors.onSecondaryContainer,
+      }}
+      style={{ backgroundColor: colors.secondaryContainer }}
+    >
+      <Text style={{ color: colors.onSecondaryContainer }}>
+        Session deleted successfully
+      </Text>
+    </Snackbar>
+  </KeyboardAvoidingView>
+);
+
 };
 
 const styles = StyleSheet.create({
